@@ -18,6 +18,7 @@
 - Roles are `admin` / `editor` / `viewer`. Every write route is guarded **server-side**; never rely on hidden UI alone.
 - All SQL uses **PDO prepared statements** — no string-interpolated values.
 - Reuse LIPA's design tokens (`theme.css`) — never hardcode colours; use `var(--...)`.
+- **Mobile-first responsive:** every page must be usable on a phone. The sidebar collapses to a top bar with a hamburger toggle below 768px; data tables scroll/reflow; inputs and buttons are touch-friendly (min 44px tap targets). Layout lives in `public/assets/css/app.css` (not inline styles).
 
 ---
 
@@ -32,8 +33,9 @@ LIPA Web 26/
 ├── public/
 │   ├── index.php                 # front controller: boot + route dispatch
 │   └── assets/
-│       ├── css/theme.css         # ported from LIPA
-│       └── js/app.js             # toast/confirm/modal helpers (ported subset)
+│       ├── css/theme.css         # ported from LIPA (design tokens)
+│       ├── css/app.css           # layout + responsive (sidebar→hamburger, tables, forms)
+│       └── js/app.js             # toast/confirm helpers + mobile nav toggle
 ├── src/
 │   ├── Database.php              # PDO connection (singleton)
 │   ├── Router.php                # register routes + dispatch
@@ -867,11 +869,13 @@ git commit -m "feat: session auth with role guards"
 
 **Files:**
 - Create: `public/assets/css/theme.css` (port from `C:/Tools/Billing 26/styles/theme.css`)
+- Create: `public/assets/css/app.css` (layout + responsive)
 - Create: `public/assets/js/app.js`
 - Create: `views/layout.php`
+- Create: `views/_shell.php`
 
 **Interfaces:**
-- Produces: a `render(string $view, array $data = [], ?string $title = null): string` helper used by controllers (defined here as a plain function in `views/layout.php`'s companion — see Step 3). Layout exposes `$user` (from `Auth::user()`) and renders the sidebar with role-aware nav links.
+- Produces: a `render(string $view, array $data = [], ?string $title = null): string` helper (defined in `views/layout.php`). Layout exposes `$user` (from `Auth::user()`) and renders a responsive shell — sidebar on desktop, top bar + hamburger on mobile — with role-aware nav links.
 
 - [ ] **Step 1: Port the theme**
 
@@ -879,7 +883,82 @@ Copy `C:/Tools/Billing 26/styles/theme.css` to `public/assets/css/theme.css` ver
 
 Run: `cp "C:/Tools/Billing 26/styles/theme.css" public/assets/css/theme.css`
 
-- [ ] **Step 2: Write `public/assets/js/app.js`** (toast + confirm helpers, vanilla)
+- [ ] **Step 2: Write `public/assets/css/app.css`** (layout + mobile-first responsive)
+
+Uses LIPA tokens via `var(--...)`. Desktop: fixed sidebar. Below 768px: sidebar hidden off-canvas, toggled by the hamburger; top bar visible; tables scroll horizontally.
+
+```css
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font, system-ui, sans-serif);
+       color: var(--text, #1a1a1a); background: var(--bg-primary, #fff); }
+
+.app-shell { display: flex; min-height: 100vh; }
+
+/* Sidebar (desktop) */
+.sidebar { width: 240px; flex: 0 0 240px; background: var(--bg-secondary, #f4f4f5);
+           border-right: 1px solid var(--border, #e4e4e7); padding: 16px;
+           display: flex; flex-direction: column; gap: 8px; }
+.sidebar-brand { font-weight: 700; font-size: 1.25rem; padding: 8px 0 16px; }
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar nav a { display: block; padding: 10px 12px; border-radius: 8px;
+                 color: inherit; text-decoration: none; min-height: 44px; }
+.sidebar nav a:hover { background: var(--bg-primary, #fff); }
+.sidebar-logout { margin-top: auto; display: flex; flex-direction: column; gap: 6px;
+                  font-size: .85rem; }
+
+/* Top bar (mobile only) */
+.topbar { display: none; align-items: center; gap: 12px; padding: 10px 16px;
+          border-bottom: 1px solid var(--border, #e4e4e7); position: sticky; top: 0;
+          background: var(--bg-primary, #fff); z-index: 20; }
+.hamburger { width: 44px; height: 44px; font-size: 1.5rem; background: none;
+             border: 1px solid var(--border, #e4e4e7); border-radius: 8px; cursor: pointer; }
+.scrim { display: none; }
+
+.content { flex: 1; padding: 24px; min-width: 0; }
+
+/* Forms & buttons (touch-friendly) */
+label { display: block; margin: 12px 0; }
+input, select, textarea { width: 100%; padding: 10px 12px; min-height: 44px;
+        border: 1px solid var(--border, #e4e4e7); border-radius: 8px;
+        font: inherit; background: var(--bg-primary, #fff); color: inherit; }
+.btn { display: inline-flex; align-items: center; justify-content: center;
+       min-height: 44px; padding: 10px 16px; border-radius: 8px; cursor: pointer;
+       text-decoration: none; border: 1px solid var(--border, #e4e4e7);
+       background: var(--bg-secondary, #f4f4f5); color: inherit; }
+.btn-primary { background: var(--accent, #7c83fd); color: #fff; border-color: transparent; }
+.btn-link-danger { background: none; border: none; color: #dc2626; cursor: pointer;
+                   min-height: 44px; }
+
+/* Tables */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th, .data-table td { padding: 10px 12px; text-align: left;
+        border-bottom: 1px solid var(--border, #e4e4e7); white-space: nowrap; }
+
+.alert-error { padding: 10px 12px; border-radius: 8px; background: #fee2e2; color: #991b1b;
+               margin: 12px 0; }
+
+/* Toasts */
+#toast-container { position: fixed; bottom: 24px; right: 24px; display: flex;
+                   flex-direction: column; gap: 8px; z-index: 300; }
+.toast { padding: 12px 16px; border-radius: 8px; background: var(--accent, #7c83fd);
+         color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.toast-error { background: #dc2626; }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .topbar { display: flex; }
+  .app-shell { display: block; }
+  .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 260px; flex: none;
+             transform: translateX(-100%); transition: transform .2s ease; z-index: 40; }
+  .app-shell.nav-open .sidebar { transform: translateX(0); }
+  .app-shell.nav-open .scrim { display: block; position: fixed; inset: 0;
+             background: rgba(0,0,0,.4); z-index: 30; }
+  .content { padding: 16px; }
+  .table-wrap { overflow-x: auto; }
+}
+```
+
+- [ ] **Step 3: Write `public/assets/js/app.js`** (UI helpers + mobile nav toggle)
 
 ```js
 // Minimal UI helpers shared across pages.
@@ -893,14 +972,22 @@ function showToast(message, type = 'success') {
   setTimeout(() => t.remove(), 2800);
 }
 
-// Attach to any form/button with data-confirm="message"
+// Mobile nav: toggle .nav-open on the shell via hamburger / scrim.
+document.addEventListener('click', (e) => {
+  const shell = document.querySelector('.app-shell');
+  if (!shell) return;
+  if (e.target.closest('[data-nav-toggle]')) { shell.classList.toggle('nav-open'); }
+  else if (e.target.classList.contains('scrim')) { shell.classList.remove('nav-open'); }
+});
+
+// Confirm dialogs for any form with data-confirm="message"
 document.addEventListener('submit', (e) => {
   const msg = e.target.getAttribute('data-confirm');
   if (msg && !window.confirm(msg)) { e.preventDefault(); }
 });
 ```
 
-- [ ] **Step 3: Write `views/layout.php`** (defines the `render()` helper + HTML shell)
+- [ ] **Step 4: Write `views/layout.php`** (defines the `render()` helper + HTML shell)
 
 ```php
 <?php
@@ -924,7 +1011,9 @@ if (!function_exists('render')) {
 }
 ```
 
-- [ ] **Step 4: Write `views/_shell.php`** (the outer HTML; `$content`, `$title`, `$user` in scope)
+- [ ] **Step 5: Write `views/_shell.php`** (responsive outer HTML; `$content`, `$title`, `$user` in scope)
+
+The same `<nav>` markup is reused on desktop (sidebar) and mobile (off-canvas). The hamburger lives in `.topbar` (shown only < 768px via CSS); the `.scrim` closes the menu on tap.
 
 ```php
 <!DOCTYPE html>
@@ -934,10 +1023,16 @@ if (!function_exists('render')) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= e($title ?? 'LIPA') ?> — LIPA</title>
   <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/app.css">
 </head>
 <body>
 <?php if ($user): ?>
-  <div class="app-shell" style="display:flex;min-height:100vh">
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="hamburger" data-nav-toggle aria-label="Menu">&#9776;</button>
+      <span class="sidebar-brand">LIPA</span>
+    </header>
+    <div class="scrim"></div>
     <aside class="sidebar">
       <div class="sidebar-brand">LIPA</div>
       <nav>
@@ -956,10 +1051,10 @@ if (!function_exists('render')) {
       </nav>
       <form method="post" action="/logout" class="sidebar-logout">
         <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
-        <button type="submit">Log out</button>
+        <button type="submit" class="btn">Log out</button>
       </form>
     </aside>
-    <main class="content" style="flex:1;padding:24px"><?= $content ?></main>
+    <main class="content"><?= $content ?></main>
   </div>
 <?php else: ?>
   <?= $content ?>
@@ -969,11 +1064,13 @@ if (!function_exists('render')) {
 </html>
 ```
 
-- [ ] **Step 5: Commit**
+> Note: list views wrap their `<table class="data-table">` in `<div class="table-wrap">` so tables scroll horizontally on mobile (applies to `views/users/index.php` in Task 9 and all later list views).
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add public/assets/css/theme.css public/assets/js/app.js views/layout.php views/_shell.php
-git commit -m "feat: theme, layout shell, and UI helpers"
+git add public/assets/css/theme.css public/assets/css/app.css public/assets/js/app.js views/layout.php views/_shell.php
+git commit -m "feat: responsive theme, layout shell, and UI helpers"
 ```
 
 ---
@@ -1238,6 +1335,7 @@ final class UserController
   <h1>Users</h1>
   <a class="btn btn-primary" href="/users/new">New user</a>
 </div>
+<div class="table-wrap">
 <table class="data-table">
   <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Active</th><th></th></tr></thead>
   <tbody>
@@ -1258,6 +1356,7 @@ final class UserController
   <?php endforeach; ?>
   </tbody>
 </table>
+</div>
 ```
 
 - [ ] **Step 3: Write `views/users/form.php`**
@@ -1291,6 +1390,7 @@ final class UserController
 
 Log in as the seeded admin (Task 10). Visit `/users` → list shows admin. Create an editor and a viewer. Edit one (blank password keeps it). Try deleting your own account → it is refused (stays in list).
 Log in as the viewer → `/users` returns 403 Forbidden and the sidebar hides admin links.
+Then open DevTools device toolbar (or resize < 768px): the sidebar collapses, the hamburger appears, tapping it slides the nav in, the scrim closes it, and the users table scrolls horizontally.
 
 - [ ] **Step 5: Commit**
 
@@ -1427,6 +1527,7 @@ git commit -m "docs: local setup and run instructions"
 - Session auth + three roles + server-side guards → Tasks 6, 8, 9. ✓
 - Admin Users CRUD → Task 9. ✓
 - Ported `theme.css`, role-aware sidebar nav → Task 7. ✓
+- Mobile-first responsive (sidebar→hamburger < 768px, scrollable tables, 44px tap targets) → Task 7 (`app.css`, `_shell.php`, `app.js`), table wrapping in Task 9. ✓
 - First-admin bootstrap → Task 10. ✓
 - English (UK) UI copy → all views. ✓
 - Local serve + deployment notes → Task 11. ✓

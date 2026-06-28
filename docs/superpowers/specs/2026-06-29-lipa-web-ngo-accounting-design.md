@@ -29,6 +29,9 @@ same pattern as the existing LIPA desktop app, rebuilt for the web.
 - **Users/roles:** three roles — `admin`, `editor`, `viewer` (accountant).
 - **UI language:** English (UK) throughout.
 - **Receipts:** file upload (PDF/image) attached to each income and expense entry.
+- **Responsive / mobile:** the app must be fully usable on a phone — the sidebar collapses
+  to a top bar with a hamburger toggle, tables reflow/scroll, and forms/buttons are
+  touch-friendly. Mobile-first CSS.
 
 ---
 
