@@ -21,6 +21,7 @@ use App\Controllers\SettingController;
 use App\Controllers\ReportController;
 use App\Controllers\ActivityController;
 use App\Controllers\AccountController;
+use App\Controllers\TransferController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -105,6 +106,14 @@ $router->add('POST', '/accounts',            fn() => (new AccountController())->
 $router->add('GET',  '/accounts/:id/edit',   fn($p) => (new AccountController())->edit((int)$p['id']));
 $router->add('POST', '/accounts/:id',        fn($p) => (new AccountController())->update((int)$p['id']));
 $router->add('POST', '/accounts/:id/delete', fn($p) => (new AccountController())->delete((int)$p['id']));
+
+// Transfers (view: all; write: admin/editor)
+$router->add('GET',  '/transfers',            fn() => (new TransferController())->index());
+$router->add('GET',  '/transfers/new',        fn() => (new TransferController())->create());
+$router->add('POST', '/transfers',            fn() => (new TransferController())->store());
+$router->add('GET',  '/transfers/:id/edit',   fn($p) => (new TransferController())->edit((int)$p['id']));
+$router->add('POST', '/transfers/:id',        fn($p) => (new TransferController())->update((int)$p['id']));
+$router->add('POST', '/transfers/:id/delete', fn($p) => (new TransferController())->delete((int)$p['id']));
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

@@ -25,6 +25,7 @@
         <a href="/">Dashboard</a>
         <a href="/income">Income</a>
         <a href="/expenses">Expenses</a>
+        <a href="/transfers">Transfers</a>
         <a href="/contacts">Contacts</a>
         <?php if (Auth::is('admin','editor')): ?><a href="/projects">Projects</a><?php endif; ?>
         <a href="/reports">Reports</a>
