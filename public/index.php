@@ -15,6 +15,7 @@ use App\Controllers\UserController;
 use App\Controllers\ContactController;
 use App\Controllers\ProjectController;
 use App\Controllers\CategoryController;
+use App\Controllers\IncomeController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -60,6 +61,14 @@ $router->add('POST', '/categories',            fn() => (new CategoryController()
 $router->add('GET',  '/categories/:id/edit',   fn($p) => (new CategoryController())->edit((int)$p['id']));
 $router->add('POST', '/categories/:id',        fn($p) => (new CategoryController())->update((int)$p['id']));
 $router->add('POST', '/categories/:id/delete', fn($p) => (new CategoryController())->delete((int)$p['id']));
+
+// Income
+$router->add('GET',  '/income',            fn() => (new IncomeController())->index());
+$router->add('GET',  '/income/new',        fn() => (new IncomeController())->create());
+$router->add('POST', '/income',            fn() => (new IncomeController())->store());
+$router->add('GET',  '/income/:id/edit',   fn($p) => (new IncomeController())->edit((int)$p['id']));
+$router->add('POST', '/income/:id',        fn($p) => (new IncomeController())->update((int)$p['id']));
+$router->add('POST', '/income/:id/delete', fn($p) => (new IncomeController())->delete((int)$p['id']));
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
