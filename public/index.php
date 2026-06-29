@@ -12,6 +12,7 @@ use App\Auth;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\UserController;
+use App\Controllers\ContactController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -33,6 +34,14 @@ $router->add('POST', '/users',            fn() => (new UserController())->store(
 $router->add('GET',  '/users/:id/edit',   fn($p) => (new UserController())->edit((int)$p['id']));
 $router->add('POST', '/users/:id',        fn($p) => (new UserController())->update((int)$p['id']));
 $router->add('POST', '/users/:id/delete', fn($p) => (new UserController())->delete((int)$p['id']));
+
+// Contacts (donors + vendors)
+$router->add('GET',  '/contacts',            fn() => (new ContactController())->index());
+$router->add('GET',  '/contacts/new',        fn() => (new ContactController())->create());
+$router->add('POST', '/contacts',            fn() => (new ContactController())->store());
+$router->add('GET',  '/contacts/:id/edit',   fn($p) => (new ContactController())->edit((int)$p['id']));
+$router->add('POST', '/contacts/:id',        fn($p) => (new ContactController())->update((int)$p['id']));
+$router->add('POST', '/contacts/:id/delete', fn($p) => (new ContactController())->delete((int)$p['id']));
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
