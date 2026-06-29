@@ -17,6 +17,14 @@
       <?php endforeach; ?>
     </select>
   </label>
+  <label style="margin:0">Account
+    <select name="account_id">
+      <option value="">All</option>
+      <?php foreach ($accounts as $acc): ?>
+        <option value="<?= (int)$acc['id'] ?>" <?= ((int)($f['account_id'] ?? 0) === (int)$acc['id']) ? 'selected' : '' ?>><?= e($acc['name']) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </label>
   <button type="submit" class="btn">Filter</button>
   <a class="btn" href="<?= e($action) ?>">Clear</a>
 </form>

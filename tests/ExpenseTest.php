@@ -58,6 +58,17 @@ final class ExpenseTest extends DatabaseTestCase
         $this->assertNull(Expense::find($id));
     }
 
+    public function test_filter_by_account(): void
+    {
+        $cash = \App\Models\Account::create(['name'=>'Cash','type'=>'cash','opening_balance'=>0,'opening_balance_date'=>null]);
+        $bank = \App\Models\Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
+        $base = ['contact_id'=>null,'project_id'=>null,'category_id'=>null,'description'=>'','reference'=>'','notes'=>'','created_by'=>null,'date'=>'2026-03-01'];
+        Expense::create($base + ['account_id'=>$cash,'amount_tzs'=>100]);
+        Expense::create($base + ['account_id'=>$bank,'amount_tzs'=>200]);
+        $this->assertCount(1, Expense::all(['account_id'=>$cash]));
+        $this->assertEqualsWithDelta(100.0, Expense::totalTzs(['account_id'=>$cash]), 0.001);
+    }
+
     public function test_account_id_round_trip_and_join(): void
     {
         $acc = \App\Models\Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);

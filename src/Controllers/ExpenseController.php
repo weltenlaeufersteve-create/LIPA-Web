@@ -15,6 +15,7 @@ final class ExpenseController
         return [
             'date_from'=>$_GET['date_from'] ?? '', 'date_to'=>$_GET['date_to'] ?? '',
             'project_id'=>$_GET['project_id'] ?? '', 'category_id'=>$_GET['category_id'] ?? '',
+            'account_id'=>$_GET['account_id'] ?? '',
         ];
     }
 
@@ -25,6 +26,7 @@ final class ExpenseController
         return render('expenses/index', [
             'rows'=>Expense::all($f), 'total'=>Expense::totalTzs($f), 'f'=>$f,
             'projects'=>Project::all(), 'categories'=>Category::all('expense'),
+            'accounts'=>\App\Models\Account::all(true),
         ], 'Expenses');
     }
 

@@ -15,6 +15,7 @@ final class IncomeController
         return [
             'date_from'=>$_GET['date_from'] ?? '', 'date_to'=>$_GET['date_to'] ?? '',
             'project_id'=>$_GET['project_id'] ?? '', 'category_id'=>$_GET['category_id'] ?? '',
+            'account_id'=>$_GET['account_id'] ?? '',
         ];
     }
 
@@ -25,6 +26,7 @@ final class IncomeController
         return render('income/index', [
             'rows'=>Income::all($f), 'total'=>Income::totalTzs($f), 'f'=>$f,
             'projects'=>Project::all(), 'categories'=>Category::all('income'),
+            'accounts'=>\App\Models\Account::all(true),
         ], 'Income');
     }
 

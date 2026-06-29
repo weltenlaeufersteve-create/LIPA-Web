@@ -90,6 +90,7 @@ final class Expense
         if (!empty($f['date_to']))   { $cond[] = 'e.date <= :date_to';   $params[':date_to']   = $f['date_to']; }
         if (!empty($f['project_id']))  { $cond[] = 'e.project_id = :project_id';   $params[':project_id']  = (int)$f['project_id']; }
         if (!empty($f['category_id'])) { $cond[] = 'e.category_id = :category_id'; $params[':category_id'] = (int)$f['category_id']; }
+        if (!empty($f['account_id']))  { $cond[] = 'e.account_id = :account_id';   $params[':account_id']  = (int)$f['account_id']; }
         return [$cond ? 'WHERE ' . implode(' AND ', $cond) : '', $params];
     }
 
