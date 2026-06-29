@@ -11,16 +11,22 @@
   <link rel="stylesheet" href="<?= asset('/assets/css/app.css') ?>">
 </head>
 <body>
-<?php if ($user): ?>
+<?php if ($user): $org = \App\Models\Setting::all(); $orgName = $org['org_name'] ?? ''; ?>
   <div class="app-shell">
     <header class="topbar">
       <button class="hamburger" data-nav-toggle aria-label="Menu">&#9776;</button>
-      <span class="sidebar-brand">LIPA</span>
+      <span class="sidebar-brand"><?= e($orgName !== '' ? $orgName : 'LIPA') ?></span>
     </header>
     <button type="button" id="theme-toggle" class="theme-toggle-fixed" aria-label="Toggle theme" title="Toggle theme">🌙</button>
     <div class="scrim"></div>
     <aside class="sidebar">
-      <div class="sidebar-brand">LIPA</div>
+      <div class="sidebar-brand ngo-brand">
+        <?php if (!empty($org['logo'])): ?>
+          <img src="/uploads/<?= e($org['logo']) ?>" alt="<?= e($orgName !== '' ? $orgName : 'Logo') ?>" class="ngo-logo">
+        <?php else: ?>
+          <?= e($orgName !== '' ? $orgName : 'LIPA') ?>
+        <?php endif; ?>
+      </div>
       <div class="sidebar-tagline">Income &amp; Expenses for small NGOs</div>
       <nav class="nav-main">
         <a href="/">Dashboard</a>
@@ -46,6 +52,7 @@
           <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
           <button type="submit" class="btn">Log out</button>
         </form>
+        <div class="powered-by">Powered by <strong>LIPA</strong></div>
       </div>
     </aside>
     <main class="content"><?= $content ?></main>
