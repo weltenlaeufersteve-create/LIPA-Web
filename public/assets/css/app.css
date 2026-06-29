@@ -72,6 +72,8 @@ a { color: var(--accent, #22c55e); }
 .list-toolbar { display: flex; justify-content: space-between; align-items: flex-end;
                 gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .list-toolbar > form { margin-bottom: 0; }
+.filters { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: end; }
 .list-toolbar .list-new { margin-left: auto; white-space: nowrap; }
 
 /* Forms & buttons (touch-friendly) */
