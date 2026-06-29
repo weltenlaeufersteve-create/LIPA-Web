@@ -10,11 +10,18 @@ cashbook** (not double-entry). Build order top-to-bottom.
   sheets). Also: consolidated tabbed admin area, grouped sidebar nav, fixed top-right
   theme toggle.
 
+## Shipped (cont.)
+- ✅ **Project (donor) statement (print-to-PDF)** — Reports → project + period → printable
+  statement (opening/received/spent/closing, TZS). Live 2026-06-29.
+- ✅ GUI polish: NGO-first branding, rounded menu card, sortable tables, account filter,
+  two-row filter bar.
+
 ## Planned (agreed)
-3. **Donor / project statement (PDF)** — printable "where did Donor X's / Grant Y's money
-   go" statement for funders. Moderate.
 4. **Period lock + automatic nightly backup** — lock an audited month/year against edits;
-   cron `mysqldump` on the server keeping a few days. Small–moderate.
+   cron `mysqldump` on the server keeping a few days. Small–moderate. **← next**
+
+## Future
+- Full GUI redesign (with Claude Design).
 
 ## Later / nice-to-have
 - Budget vs actual (annual, per category or project)
