@@ -13,6 +13,7 @@ final class ReportController
         return render('reports/index', [
             'date_from'=>$_GET['date_from'] ?? (date('Y') . '-01-01'),
             'date_to'=>$_GET['date_to'] ?? (date('Y') . '-12-31'),
+            'projects'=>\App\Models\Project::all(true),
         ], 'Reports');
     }
 
