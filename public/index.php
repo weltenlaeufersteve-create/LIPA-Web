@@ -17,6 +17,7 @@ use App\Controllers\ProjectController;
 use App\Controllers\CategoryController;
 use App\Controllers\IncomeController;
 use App\Controllers\ExpenseController;
+use App\Controllers\SettingController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -82,6 +83,10 @@ $router->add('POST', '/expenses/:id/delete', fn($p) => (new ExpenseController())
 // Receipt downloads (authenticated, all roles)
 $router->add('GET', '/income/:id/receipt',   fn($p) => (new IncomeController())->receipt((int)$p['id']));
 $router->add('GET', '/expenses/:id/receipt', fn($p) => (new ExpenseController())->receipt((int)$p['id']));
+
+// Settings (admin)
+$router->add('GET',  '/settings', fn() => (new SettingController())->index());
+$router->add('POST', '/settings', fn() => (new SettingController())->save());
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
