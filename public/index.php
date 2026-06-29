@@ -79,6 +79,10 @@ $router->add('GET',  '/expenses/:id/edit',   fn($p) => (new ExpenseController())
 $router->add('POST', '/expenses/:id',        fn($p) => (new ExpenseController())->update((int)$p['id']));
 $router->add('POST', '/expenses/:id/delete', fn($p) => (new ExpenseController())->delete((int)$p['id']));
 
+// Receipt downloads (authenticated, all roles)
+$router->add('GET', '/income/:id/receipt',   fn($p) => (new IncomeController())->receipt((int)$p['id']));
+$router->add('GET', '/expenses/:id/receipt', fn($p) => (new ExpenseController())->receipt((int)$p['id']));
+
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 } catch (ForbiddenException $ex) {
