@@ -29,6 +29,13 @@
 <h1><?= e($s['org_name'] ?? 'Organisation') ?></h1>
 <?php if (!empty($s['org_address'])): ?><div class="muted"><?= nl2br(e($s['org_address'])) ?></div><?php endif; ?>
 <?php if (!empty($s['org_email'])): ?><div class="muted"><?= e($s['org_email']) ?></div><?php endif; ?>
+<?php if (!empty($s['tax_id']) || !empty($s['ngo_number'])): ?>
+  <div class="muted">
+    <?php if (!empty($s['tax_id'])): ?>Tax ID: <?= e($s['tax_id']) ?><?php endif; ?>
+    <?php if (!empty($s['tax_id']) && !empty($s['ngo_number'])): ?> &middot; <?php endif; ?>
+    <?php if (!empty($s['ngo_number'])): ?>NGO Reg. No: <?= e($s['ngo_number']) ?><?php endif; ?>
+  </div>
+<?php endif; ?>
 
 <h2>Project Statement</h2>
 <p><strong><?= e($d['project']['name']) ?></strong><br>

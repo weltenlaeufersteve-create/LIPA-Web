@@ -7,7 +7,7 @@ use App\Models\Activity;
 
 final class SettingController
 {
-    private const KEYS = ['org_name','org_address','org_email','base_currency'];
+    private const KEYS = ['org_name','org_address','org_email','tax_id','ngo_number','base_currency'];
 
     public function index(): string
     {

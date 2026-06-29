@@ -3,6 +3,7 @@ namespace App\Reports;
 
 use App\Models\Income;
 use App\Models\Expense;
+use App\Models\Setting;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 final class ExcelExport
@@ -16,16 +17,19 @@ final class ExcelExport
         $expTotal = Expense::totalTzs($filters);
 
         // 1. Overview
+        $set = Setting::all();
+        $overview = [[$set['org_name'] ?? 'Income & Expenditure']];
+        if (!empty($set['tax_id']))     { $overview[] = ['Tax ID', $set['tax_id']]; }
+        if (!empty($set['ngo_number'])) { $overview[] = ['NGO Reg. No', $set['ngo_number']]; }
+        $overview[] = ['Period', ($filters['date_from'] ?? 'all') . ' to ' . ($filters['date_to'] ?? 'all')];
+        $overview[] = [];
+        $overview[] = ['Total income (TZS)', $incTotal];
+        $overview[] = ['Total expenses (TZS)', $expTotal];
+        $overview[] = ['Balance (TZS)', $incTotal - $expTotal];
+
         $s = $book->getActiveSheet();
         $s->setTitle('Overview');
-        $s->fromArray([
-            ['LIPA — Income & Expenditure'],
-            ['Period', ($filters['date_from'] ?? 'all') . ' to ' . ($filters['date_to'] ?? 'all')],
-            [],
-            ['Total income (TZS)', $incTotal],
-            ['Total expenses (TZS)', $expTotal],
-            ['Balance (TZS)', $incTotal - $expTotal],
-        ], null, 'A1');
+        $s->fromArray($overview, null, 'A1');
 
         // 2. Income
         $s = $book->createSheet(); $s->setTitle('Income');
