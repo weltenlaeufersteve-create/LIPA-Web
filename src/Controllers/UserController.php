@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Models\User;
+use App\Models\Activity;
 
 final class UserController
 {
@@ -25,10 +26,11 @@ final class UserController
         if ($error) {
             return render('users/form', ['u' => $_POST, 'error' => $error], 'New user');
         }
-        User::create([
+        $newId = User::create([
             'name' => trim($_POST['name']), 'email' => trim($_POST['email']),
             'password' => $_POST['password'], 'role' => $_POST['role'],
         ]);
+        Activity::log(Auth::user()['id'] ?? null, 'create', 'user', $newId, 'Created user ' . trim($_POST['email']));
         header('Location: /users'); exit;
     }
 
@@ -53,6 +55,7 @@ final class UserController
             'role' => $_POST['role'], 'active' => $_POST['active'] ?? 0,
             'password' => $_POST['password'] ?? '',
         ]);
+        Activity::log(Auth::user()['id'] ?? null, 'update', 'user', $id, 'Updated user');
         header('Location: /users'); exit;
     }
 
@@ -62,6 +65,7 @@ final class UserController
         // Guard: do not let an admin delete their own account.
         if ((int)(Auth::user()['id']) !== $id) {
             User::delete($id);
+            Activity::log(Auth::user()['id'] ?? null, 'delete', 'user', $id, 'Deleted user');
         }
         header('Location: /users'); exit;
     }

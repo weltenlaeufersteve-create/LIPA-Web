@@ -6,6 +6,7 @@ use App\Models\Expense;
 use App\Models\Contact;
 use App\Models\Project;
 use App\Models\Category;
+use App\Models\Activity;
 
 final class ExpenseController
 {
@@ -42,6 +43,7 @@ final class ExpenseController
         $d['created_by'] = Auth::user()['id'] ?? null;
         $id = Expense::create($d);
         $this->maybeStoreReceipt($id);
+        Activity::log(Auth::user()['id'] ?? null, 'create', 'expense', $id, 'Created expense (' . number_format($d['amount_tzs'], 2) . ' TZS)');
         header('Location: /expenses'); exit;
     }
 
@@ -61,6 +63,7 @@ final class ExpenseController
         if ($error) { return render('expenses/form', $this->formData(array_merge($_POST,['id'=>$id]), $error), 'Edit expense'); }
         Expense::update($id, $this->fields($_POST));
         $this->maybeStoreReceipt($id);
+        Activity::log(Auth::user()['id'] ?? null, 'update', 'expense', $id, 'Updated expense');
         header('Location: /expenses'); exit;
     }
 
@@ -68,6 +71,7 @@ final class ExpenseController
     {
         Auth::requireRole('admin','editor');
         Expense::delete($id);
+        Activity::log(Auth::user()['id'] ?? null, 'delete', 'expense', $id, 'Deleted expense');
         header('Location: /expenses'); exit;
     }
 

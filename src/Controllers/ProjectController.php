@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Models\Project;
+use App\Models\Activity;
 
 final class ProjectController
 {
@@ -23,7 +24,8 @@ final class ProjectController
         Auth::requireRole('admin','editor');
         $error = $this->validate($_POST);
         if ($error) { return render('projects/form', ['p'=>$_POST, 'error'=>$error], 'New project'); }
-        Project::create($this->fields($_POST));
+        $newId = Project::create($this->fields($_POST));
+        Activity::log(Auth::user()['id'] ?? null, 'create', 'project', $newId, 'Created project ' . trim($_POST['name'] ?? ''));
         header('Location: /projects'); exit;
     }
 
@@ -42,6 +44,7 @@ final class ProjectController
         $error = $this->validate($_POST);
         if ($error) { return render('projects/form', ['p'=>array_merge($_POST,['id'=>$id]), 'error'=>$error], 'Edit project'); }
         Project::update($id, $this->fields($_POST) + ['active'=>$_POST['active'] ?? 0]);
+        Activity::log(Auth::user()['id'] ?? null, 'update', 'project', $id, 'Updated project');
         header('Location: /projects'); exit;
     }
 
@@ -49,6 +52,7 @@ final class ProjectController
     {
         Auth::requireRole('admin','editor');
         Project::delete($id);
+        Activity::log(Auth::user()['id'] ?? null, 'delete', 'project', $id, 'Deleted project');
         header('Location: /projects'); exit;
     }
 

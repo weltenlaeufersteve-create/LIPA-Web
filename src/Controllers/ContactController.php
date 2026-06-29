@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Models\Contact;
+use App\Models\Activity;
 
 final class ContactController
 {
@@ -25,7 +26,8 @@ final class ContactController
         Auth::requireRole('admin','editor');
         $error = $this->validate($_POST);
         if ($error) { return render('contacts/form', ['c'=>$_POST, 'error'=>$error], 'New contact'); }
-        Contact::create($this->fields($_POST));
+        $newId = Contact::create($this->fields($_POST));
+        Activity::log(Auth::user()['id'] ?? null, 'create', 'contact', $newId, 'Created contact ' . trim($_POST['name'] ?? ''));
         header('Location: /contacts'); exit;
     }
 
@@ -44,6 +46,7 @@ final class ContactController
         $error = $this->validate($_POST);
         if ($error) { return render('contacts/form', ['c'=>array_merge($_POST,['id'=>$id]), 'error'=>$error], 'Edit contact'); }
         Contact::update($id, $this->fields($_POST) + ['active'=>$_POST['active'] ?? 0]);
+        Activity::log(Auth::user()['id'] ?? null, 'update', 'contact', $id, 'Updated contact');
         header('Location: /contacts'); exit;
     }
 
@@ -51,6 +54,7 @@ final class ContactController
     {
         Auth::requireRole('admin','editor');
         Contact::delete($id);
+        Activity::log(Auth::user()['id'] ?? null, 'delete', 'contact', $id, 'Deleted contact');
         header('Location: /contacts'); exit;
     }
 

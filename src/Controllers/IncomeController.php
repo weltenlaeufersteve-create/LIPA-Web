@@ -6,6 +6,7 @@ use App\Models\Income;
 use App\Models\Contact;
 use App\Models\Project;
 use App\Models\Category;
+use App\Models\Activity;
 
 final class IncomeController
 {
@@ -42,6 +43,7 @@ final class IncomeController
         $d['created_by'] = Auth::user()['id'] ?? null;
         $id = Income::create($d);
         $this->maybeStoreReceipt($id);
+        Activity::log(Auth::user()['id'] ?? null, 'create', 'income', $id, 'Created income (' . number_format($d['amount_tzs'], 2) . ' TZS)');
         header('Location: /income'); exit;
     }
 
@@ -61,6 +63,7 @@ final class IncomeController
         if ($error) { return render('income/form', $this->formData(array_merge($_POST,['id'=>$id]), $error), 'Edit income'); }
         Income::update($id, $this->fields($_POST));
         $this->maybeStoreReceipt($id);
+        Activity::log(Auth::user()['id'] ?? null, 'update', 'income', $id, 'Updated income');
         header('Location: /income'); exit;
     }
 
@@ -68,6 +71,7 @@ final class IncomeController
     {
         Auth::requireRole('admin','editor');
         Income::delete($id);
+        Activity::log(Auth::user()['id'] ?? null, 'delete', 'income', $id, 'Deleted income');
         header('Location: /income'); exit;
     }
 

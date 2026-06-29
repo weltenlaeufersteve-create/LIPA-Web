@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Models\User;
+use App\Models\Activity;
 
 class ForbiddenException extends \RuntimeException {}
 
@@ -20,6 +21,7 @@ final class Auth
             'id' => (int)$user['id'], 'name' => $user['name'],
             'email' => $user['email'], 'role' => $user['role'],
         ];
+        Activity::log((int)$user['id'], 'login', 'user', (int)$user['id'], 'Logged in');
         return true;
     }
 

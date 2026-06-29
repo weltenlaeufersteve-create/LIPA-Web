@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Auth;
 use App\Models\Category;
+use App\Models\Activity;
 
 final class CategoryController
 {
@@ -23,7 +24,8 @@ final class CategoryController
         Auth::requireRole('admin');
         $error = $this->validate($_POST);
         if ($error) { return render('categories/form', ['cat'=>$_POST, 'error'=>$error], 'New category'); }
-        Category::create($this->fields($_POST));
+        $newId = Category::create($this->fields($_POST));
+        Activity::log(Auth::user()['id'] ?? null, 'create', 'category', $newId, 'Created category ' . trim($_POST['name'] ?? ''));
         header('Location: /categories'); exit;
     }
 
@@ -42,6 +44,7 @@ final class CategoryController
         $error = $this->validate($_POST);
         if ($error) { return render('categories/form', ['cat'=>array_merge($_POST,['id'=>$id]), 'error'=>$error], 'Edit category'); }
         Category::update($id, $this->fields($_POST) + ['active'=>$_POST['active'] ?? 0]);
+        Activity::log(Auth::user()['id'] ?? null, 'update', 'category', $id, 'Updated category');
         header('Location: /categories'); exit;
     }
 
@@ -49,6 +52,7 @@ final class CategoryController
     {
         Auth::requireRole('admin');
         Category::delete($id);
+        Activity::log(Auth::user()['id'] ?? null, 'delete', 'category', $id, 'Deleted category');
         header('Location: /categories'); exit;
     }
 
