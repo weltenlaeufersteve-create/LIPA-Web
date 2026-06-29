@@ -1,3 +1,4 @@
+<?php $activeTab = 'categories'; include dirname(__DIR__) . '/admin/_tabs.php'; ?>
 <div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
   <h1>Categories</h1>
   <a class="btn btn-primary" href="/categories/new">New category</a>

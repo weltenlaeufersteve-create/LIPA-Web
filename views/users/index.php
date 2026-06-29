@@ -1,3 +1,4 @@
+<?php $activeTab = 'users'; include dirname(__DIR__) . '/admin/_tabs.php'; ?>
 <div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
   <h1>Users</h1>
   <a class="btn btn-primary" href="/users/new">New user</a>

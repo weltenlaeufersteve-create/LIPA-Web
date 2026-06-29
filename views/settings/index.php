@@ -1,4 +1,5 @@
-<h1>Settings</h1>
+<?php $activeTab = 'organisation'; include dirname(__DIR__) . '/admin/_tabs.php'; ?>
+<h1>Organisation</h1>
 <?php if (!empty($saved)): ?><div class="alert" style="background:var(--accent-subtle);padding:10px 12px;border-radius:8px;margin:12px 0">Settings saved.</div><?php endif; ?>
 <form method="post" enctype="multipart/form-data" action="/settings">
   <label>Organisation name <input name="org_name" value="<?= e($s['org_name'] ?? '') ?>"></label>

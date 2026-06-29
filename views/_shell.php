@@ -29,8 +29,6 @@
         <?php if (Auth::is('admin','editor')): ?><a href="/projects">Projects</a><?php endif; ?>
         <a href="/reports">Reports</a>
         <?php if (Auth::is('admin')): ?>
-          <a href="/categories">Categories</a>
-          <a href="/users">Users</a>
           <a href="/settings">Settings</a>
         <?php endif; ?>
         <?php if (Auth::is('admin','viewer')): ?><a href="/activity">Activity log</a><?php endif; ?>

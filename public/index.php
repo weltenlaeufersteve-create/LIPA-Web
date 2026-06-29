@@ -20,6 +20,7 @@ use App\Controllers\ExpenseController;
 use App\Controllers\SettingController;
 use App\Controllers\ReportController;
 use App\Controllers\ActivityController;
+use App\Controllers\AccountController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -96,6 +97,14 @@ $router->add('GET', '/reports/export', fn() => (new ReportController())->export(
 
 // Activity log (admin, viewer)
 $router->add('GET', '/activity', fn() => (new ActivityController())->index());
+
+// Accounts (admin)
+$router->add('GET',  '/accounts',            fn() => (new AccountController())->index());
+$router->add('GET',  '/accounts/new',        fn() => (new AccountController())->create());
+$router->add('POST', '/accounts',            fn() => (new AccountController())->store());
+$router->add('GET',  '/accounts/:id/edit',   fn($p) => (new AccountController())->edit((int)$p['id']));
+$router->add('POST', '/accounts/:id',        fn($p) => (new AccountController())->update((int)$p['id']));
+$router->add('POST', '/accounts/:id/delete', fn($p) => (new AccountController())->delete((int)$p['id']));
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
