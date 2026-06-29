@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>/* apply saved theme before paint to avoid flash */(function(){try{var t=localStorage.getItem('lipa_theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
   <title><?= e($title ?? 'LIPA') ?> — LIPA</title>
+  <link rel="icon" type="image/png" href="<?= asset('/assets/icon3.png') ?>">
   <link rel="stylesheet" href="<?= asset('/assets/css/theme.css') ?>">
   <link rel="stylesheet" href="<?= asset('/assets/css/app.css') ?>">
 </head>
