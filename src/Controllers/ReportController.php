@@ -30,4 +30,27 @@ final class ReportController
         (new Xlsx($book))->save('php://output');
         exit;
     }
+
+    public function statement(): string
+    {
+        Auth::requireRole('admin','editor','viewer');
+        $projectId = (int)($_GET['project_id'] ?? 0);
+        $from = $_GET['date_from'] ?? '';
+        $to   = $_GET['date_to'] ?? '';
+        $valid = $projectId > 0
+            && \DateTime::createFromFormat('Y-m-d', $from)
+            && \DateTime::createFromFormat('Y-m-d', $to);
+
+        if (!$valid) {
+            return '<p style="font-family:sans-serif;padding:24px">Please choose a project and valid dates. <a href="/reports">Back to Reports</a>.</p>';
+        }
+        $d = \App\Reports\ProjectStatement::build($projectId, $from, $to);
+        if (!$d['project']) {
+            return '<p style="font-family:sans-serif;padding:24px">Project not found. <a href="/reports">Back to Reports</a>.</p>';
+        }
+        $s = \App\Models\Setting::all();
+        ob_start();
+        include dirname(__DIR__, 2) . '/views/reports/statement.php';
+        return ob_get_clean();
+    }
 }
