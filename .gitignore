@@ -9,3 +9,4 @@ public/uploads/*
 
 storage/receipts/*
 !storage/receipts/.gitkeep
+.deploy-secrets
