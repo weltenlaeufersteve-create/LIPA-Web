@@ -48,10 +48,15 @@
 </table>
 </div>
 
-<h2>Recent activity</h2>
-<ul>
-  <?php foreach ($activity as $a): ?>
-    <li><?= e($a['created_at']) ?> — <?= e($a['user_name'] ?? 'system') ?>: <?= e($a['description'] ?? ($a['action'] . ' ' . $a['entity_type'])) ?></li>
+<h2>Expenses by category</h2>
+<div class="table-wrap">
+<table class="data-table">
+  <thead><tr><th>Category</th><th>Amount (TZS)</th></tr></thead>
+  <tbody>
+  <?php foreach ($expenseByCategory as $row): ?>
+    <tr><td><?= e($row['name'] ?? '(none)') ?></td><td><?= number_format((float)$row['total'], 2) ?></td></tr>
   <?php endforeach; ?>
-  <?php if (empty($activity)): ?><li>No activity yet.</li><?php endif; ?>
-</ul>
+  <?php if (empty($expenseByCategory)): ?><tr><td colspan="2">No expenses for this period.</td></tr><?php endif; ?>
+  </tbody>
+</table>
+</div>

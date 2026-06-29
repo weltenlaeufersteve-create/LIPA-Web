@@ -4,7 +4,6 @@ namespace App\Controllers;
 use App\Auth;
 use App\Models\Income;
 use App\Models\Expense;
-use App\Models\Activity;
 
 final class DashboardController
 {
@@ -25,8 +24,9 @@ final class DashboardController
 
         return render('dashboard', [
             'f'=>$f, 'income'=>$income, 'expense'=>$expense, 'balance'=>$income - $expense,
-            'projects'=>$proj, 'activity'=>Activity::recent(10),
+            'projects'=>$proj,
             'balances'=>\App\Models\Account::balancesAll(),
+            'expenseByCategory'=>Expense::byCategory($f),
         ], 'Dashboard');
     }
 }
