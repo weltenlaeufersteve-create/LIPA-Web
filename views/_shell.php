@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>/* apply saved theme before paint to avoid flash */(function(){try{var t=localStorage.getItem('lipa_theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
   <title><?= e($title ?? 'LIPA') ?> — LIPA</title>
-  <link rel="stylesheet" href="/assets/css/theme.css">
-  <link rel="stylesheet" href="/assets/css/app.css">
+  <link rel="stylesheet" href="<?= asset('/assets/css/theme.css') ?>">
+  <link rel="stylesheet" href="<?= asset('/assets/css/app.css') ?>">
 </head>
 <body>
 <?php if ($user): ?>
@@ -47,6 +47,6 @@
 <?php else: ?>
   <?= $content ?>
 <?php endif; ?>
-<script src="/assets/js/app.js"></script>
+<script src="<?= asset('/assets/js/app.js') ?>"></script>
 </body>
 </html>
