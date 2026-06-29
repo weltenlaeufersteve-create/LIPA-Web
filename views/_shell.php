@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>/* apply saved theme before paint to avoid flash */(function(){try{var t=localStorage.getItem('lipa_theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
   <title><?= e($title ?? 'LIPA') ?> — LIPA</title>
   <link rel="stylesheet" href="/assets/css/theme.css">
   <link rel="stylesheet" href="/assets/css/app.css">
@@ -18,6 +19,7 @@
     <div class="scrim"></div>
     <aside class="sidebar">
       <div class="sidebar-brand">LIPA</div>
+      <div class="sidebar-tagline">Income &amp; Expenses for small NGOs</div>
       <nav>
         <a href="/">Dashboard</a>
         <a href="/income">Income</a>
@@ -32,10 +34,13 @@
         <?php endif; ?>
         <?php if (Auth::is('admin','viewer')): ?><a href="/activity">Activity log</a><?php endif; ?>
       </nav>
-      <form method="post" action="/logout" class="sidebar-logout">
-        <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
-        <button type="submit" class="btn">Log out</button>
-      </form>
+      <div class="sidebar-footer">
+        <button type="button" id="theme-toggle" class="btn theme-toggle" aria-label="Toggle theme">🌙 Dark mode</button>
+        <form method="post" action="/logout" class="sidebar-logout">
+          <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
+          <button type="submit" class="btn">Log out</button>
+        </form>
+      </div>
     </aside>
     <main class="content"><?= $content ?></main>
   </div>

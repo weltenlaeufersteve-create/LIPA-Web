@@ -1,6 +1,6 @@
 <div class="login-wrap" style="max-width:360px;margin:10vh auto">
   <h1>LIPA</h1>
-  <p>Pepea — income &amp; expenses</p>
+  <p class="login-tagline">Income &amp; Expenses for small NGOs</p>
   <?php if (!empty($error)): ?>
     <div class="alert alert-error"><?= e($error) ?></div>
   <?php endif; ?>

@@ -9,6 +9,24 @@ function showToast(message, type = 'success') {
   setTimeout(() => t.remove(), 2800);
 }
 
+// Theme toggle: flip light/dark, persist per-browser in localStorage.
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  var b = document.getElementById('theme-toggle');
+  if (b) { b.textContent = t === 'dark' ? '☀ Light mode' : '🌙 Dark mode'; }
+}
+document.addEventListener('DOMContentLoaded', function () {
+  var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  applyTheme(t);
+});
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('#theme-toggle')) return;
+  var cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  var next = cur === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('lipa_theme', next); } catch (err) {}
+  applyTheme(next);
+});
+
 // Mobile nav: toggle .nav-open on the shell via hamburger / scrim.
 document.addEventListener('click', (e) => {
   const shell = document.querySelector('.app-shell');
