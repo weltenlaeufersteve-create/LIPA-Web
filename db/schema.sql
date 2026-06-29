@@ -40,12 +40,23 @@ CREATE TABLE IF NOT EXISTS categories (
   active TINYINT(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS accounts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  type ENUM('bank','cash','other') NOT NULL DEFAULT 'bank',
+  opening_balance DECIMAL(15,2) NOT NULL DEFAULT 0,
+  opening_balance_date DATE NULL,
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS income (
   id INT AUTO_INCREMENT PRIMARY KEY,
   date DATE NOT NULL,
   contact_id INT NULL,
   project_id INT NULL,
   category_id INT NULL,
+  account_id INT NULL,
   description VARCHAR(255) NULL,
   currency CHAR(3) NOT NULL DEFAULT 'TZS',
   amount_original DECIMAL(15,2) NOT NULL DEFAULT 0,
@@ -59,6 +70,7 @@ CREATE TABLE IF NOT EXISTS income (
   CONSTRAINT fk_income_contact  FOREIGN KEY (contact_id)  REFERENCES contacts(id)  ON DELETE SET NULL,
   CONSTRAINT fk_income_project  FOREIGN KEY (project_id)  REFERENCES projects(id)  ON DELETE SET NULL,
   CONSTRAINT fk_income_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+  CONSTRAINT fk_income_account  FOREIGN KEY (account_id)  REFERENCES accounts(id)   ON DELETE SET NULL,
   CONSTRAINT fk_income_user     FOREIGN KEY (created_by)  REFERENCES users(id)     ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -68,6 +80,7 @@ CREATE TABLE IF NOT EXISTS expenses (
   contact_id INT NULL,
   project_id INT NULL,
   category_id INT NULL,
+  account_id INT NULL,
   description VARCHAR(255) NULL,
   amount_tzs DECIMAL(15,2) NOT NULL DEFAULT 0,
   reference VARCHAR(120) NULL,
@@ -78,7 +91,22 @@ CREATE TABLE IF NOT EXISTS expenses (
   CONSTRAINT fk_expense_contact  FOREIGN KEY (contact_id)  REFERENCES contacts(id)  ON DELETE SET NULL,
   CONSTRAINT fk_expense_project  FOREIGN KEY (project_id)  REFERENCES projects(id)  ON DELETE SET NULL,
   CONSTRAINT fk_expense_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+  CONSTRAINT fk_expense_account  FOREIGN KEY (account_id)  REFERENCES accounts(id)   ON DELETE SET NULL,
   CONSTRAINT fk_expense_user     FOREIGN KEY (created_by)  REFERENCES users(id)     ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS transfers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE NOT NULL,
+  from_account_id INT NULL,
+  to_account_id INT NULL,
+  amount_tzs DECIMAL(15,2) NOT NULL DEFAULT 0,
+  description VARCHAR(255) NULL,
+  created_by INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_transfer_from FOREIGN KEY (from_account_id) REFERENCES accounts(id) ON DELETE SET NULL,
+  CONSTRAINT fk_transfer_to   FOREIGN KEY (to_account_id)   REFERENCES accounts(id) ON DELETE SET NULL,
+  CONSTRAINT fk_transfer_user FOREIGN KEY (created_by)      REFERENCES users(id)    ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS settings (
