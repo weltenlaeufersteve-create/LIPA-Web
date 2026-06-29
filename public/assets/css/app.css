@@ -22,6 +22,7 @@ a { color: var(--accent, #22c55e); }
 .powered-by { font-size: .7rem; color: var(--text-muted, #a0a0a8); padding-top: 10px;
               border-top: 1px solid var(--border, rgba(0,0,0,.08)); margin-top: 4px; }
 .powered-by strong { color: var(--text-secondary, #6b6b70); letter-spacing: .03em; }
+.powered-tag { color: var(--accent, #22c55e); font-weight: 600; margin-top: 2px; }
 /* Login branding */
 .login-org { margin: 0 0 4px; }
 .login-logo { max-height: 72px; max-width: 80%; margin: 0 auto 6px; display: block; }
@@ -30,8 +31,12 @@ a { color: var(--accent, #22c55e); }
 .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
 .sidebar nav a { display: block; padding: 10px 12px; border-radius: var(--radius-md, 8px);
                  color: var(--text-primary, #111113); text-decoration: none; min-height: 44px; }
-.sidebar nav a:hover { background: var(--bg-primary, #fff); }
-.nav-main { gap: 2px; margin-top: 14px; }
+.sidebar nav a:hover { background: var(--accent-subtle, rgba(34,197,94,.1)); }
+/* Main menu as a rounded card to set it apart from brand/footer */
+.nav-main { gap: 2px; margin-top: 14px; padding: 8px;
+            background: var(--bg-primary, #fff);
+            border: 1px solid var(--border, rgba(0,0,0,.08));
+            border-radius: 12px; box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,.08)); }
 /* Grouped nav blocks separated by a single divider line */
 .nav-group { display: flex; flex-direction: column; gap: 2px;
              border-top: 1px solid var(--border, rgba(0,0,0,.08));

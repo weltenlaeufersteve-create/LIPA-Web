@@ -27,7 +27,6 @@
           <?= e($orgName !== '' ? $orgName : 'LIPA') ?>
         <?php endif; ?>
       </div>
-      <div class="sidebar-tagline">Income &amp; Expenses for small NGOs</div>
       <nav class="nav-main">
         <a href="/">Dashboard</a>
         <div class="nav-group">
@@ -52,7 +51,9 @@
           <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
           <button type="submit" class="btn">Log out</button>
         </form>
-        <div class="powered-by">Powered by <strong>LIPA</strong></div>
+        <div class="powered-by">Powered by <strong>LIPA</strong>
+          <div class="powered-tag">Income &amp; Expenses for small NGOs</div>
+        </div>
       </div>
     </aside>
     <main class="content"><?= $content ?></main>

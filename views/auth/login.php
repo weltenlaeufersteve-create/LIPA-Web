@@ -5,7 +5,6 @@
   <?php else: ?>
     <h1 class="login-org"><?= e($orgName !== '' ? $orgName : 'LIPA') ?></h1>
   <?php endif; ?>
-  <p class="login-tagline">Income &amp; Expenses for small NGOs</p>
   <?php if (!empty($error)): ?>
     <div class="alert alert-error" style="text-align:left"><?= e($error) ?></div>
   <?php endif; ?>
@@ -14,5 +13,5 @@
     <label>Password <input type="password" name="password" required></label>
     <button type="submit" class="btn btn-primary">Sign in</button>
   </form>
-  <p class="login-powered">Powered by <strong>LIPA</strong></p>
+  <p class="login-powered">Powered by <strong>LIPA</strong><br>Income &amp; Expenses for small NGOs</p>
 </div>
