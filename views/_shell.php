@@ -1,3 +1,4 @@
+<?php use App\Auth; ?>
 <!DOCTYPE html>
 <html lang="en-GB" data-theme="light">
 <head>
