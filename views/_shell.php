@@ -27,6 +27,12 @@
           <?= e($orgName !== '' ? $orgName : 'LIPA') ?>
         <?php endif; ?>
       </div>
+      <?php if (!empty($org['tax_id']) || !empty($org['ngo_number'])): ?>
+        <div class="ngo-ids">
+          <?php if (!empty($org['tax_id'])): ?><div>TIN: <?= e($org['tax_id']) ?></div><?php endif; ?>
+          <?php if (!empty($org['ngo_number'])): ?><div>NGO No.: <?= e($org['ngo_number']) ?></div><?php endif; ?>
+        </div>
+      <?php endif; ?>
       <nav class="nav-main">
         <a href="/">Dashboard</a>
         <div class="nav-group">

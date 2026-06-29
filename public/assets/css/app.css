@@ -19,6 +19,7 @@ a { color: var(--accent, #22c55e); }
                    padding: 0 0 14px; font-weight: 600; letter-spacing: .02em; }
 .ngo-brand { line-height: 1.2; }
 .ngo-logo { width: 100%; height: auto; display: block; border-radius: 6px; }
+.ngo-ids { font-size: .7rem; color: var(--text-secondary, #6b6b70); margin-top: 6px; line-height: 1.5; }
 .powered-by { font-size: .7rem; color: var(--text-muted, #a0a0a8); padding-top: 10px;
               border-top: 1px solid var(--border, rgba(0,0,0,.08)); margin-top: 4px; }
 .powered-by strong { color: var(--text-secondary, #6b6b70); letter-spacing: .03em; }
