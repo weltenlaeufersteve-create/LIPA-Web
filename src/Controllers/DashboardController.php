@@ -26,6 +26,7 @@ final class DashboardController
         return render('dashboard', [
             'f'=>$f, 'income'=>$income, 'expense'=>$expense, 'balance'=>$income - $expense,
             'projects'=>$proj, 'activity'=>Activity::recent(10),
+            'balances'=>\App\Models\Account::balancesAll(),
         ], 'Dashboard');
     }
 }

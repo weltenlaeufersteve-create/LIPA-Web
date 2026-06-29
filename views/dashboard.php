@@ -17,6 +17,19 @@
   </div>
 </div>
 
+<h2>Balances by account</h2>
+<div class="table-wrap">
+<table class="data-table">
+  <thead><tr><th>Account</th><th>Current balance (TZS)</th></tr></thead>
+  <tbody>
+  <?php foreach ($balances as $b): ?>
+    <tr><td><?= e($b['name']) ?></td><td><?= number_format($b['balance'], 2) ?></td></tr>
+  <?php endforeach; ?>
+  <?php if (empty($balances)): ?><tr><td colspan="2">No accounts yet.</td></tr><?php endif; ?>
+  </tbody>
+</table>
+</div>
+
 <h2>By project</h2>
 <div class="table-wrap">
 <table class="data-table">
