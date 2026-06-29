@@ -38,6 +38,38 @@ document.addEventListener('click', (e) => {
   else if (e.target.classList.contains('scrim')) { shell.classList.remove('nav-open'); }
 });
 
+// Click a column header to sort a .data-table (client-side). Numbers sort
+// numerically (commas stripped); everything else (incl. YYYY-MM-DD dates) sorts as text.
+document.addEventListener('click', function (e) {
+  var th = e.target.closest('th');
+  if (!th) return;
+  var table = th.closest('table.data-table');
+  if (!table || !table.tBodies[0]) return;
+  var headerCells = Array.prototype.slice.call(th.parentNode.children);
+  var idx = headerCells.indexOf(th);
+  if (idx < 0 || th.textContent.trim() === '') return; // skip the actions column
+  var tbody = table.tBodies[0];
+  var rows = Array.prototype.slice.call(tbody.rows).filter(function (r) { return r.cells.length === headerCells.length; });
+  if (rows.length < 2) return;
+
+  var asc = th.getAttribute('data-sort') !== 'asc';
+  headerCells.forEach(function (h) { if (h !== th) h.removeAttribute('data-sort'); });
+  th.setAttribute('data-sort', asc ? 'asc' : 'desc');
+
+  var num = function (v) {
+    var s = String(v).replace(/,/g, '').trim();
+    return /^-?\d+(\.\d+)?$/.test(s) ? parseFloat(s) : null;
+  };
+  rows.sort(function (a, b) {
+    var x = a.cells[idx].textContent.trim(), y = b.cells[idx].textContent.trim();
+    var nx = num(x), ny = num(y), cmp;
+    if (nx !== null && ny !== null) cmp = nx - ny;
+    else cmp = x.localeCompare(y);
+    return asc ? cmp : -cmp;
+  });
+  rows.forEach(function (r) { tbody.appendChild(r); });
+});
+
 // Confirm dialogs for any form with data-confirm="message"
 document.addEventListener('submit', (e) => {
   const msg = e.target.getAttribute('data-confirm');
