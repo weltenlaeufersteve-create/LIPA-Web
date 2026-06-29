@@ -91,6 +91,28 @@ final class Expense
         return [$cond ? 'WHERE ' . implode(' AND ', $cond) : '', $params];
     }
 
+    public static function byCategory(array $filters = []): array
+    {
+        [$where, $params] = self::whereClause($filters);
+        $sql = 'SELECT cat.name AS name, COALESCE(SUM(e.amount_tzs),0) AS total
+                FROM expenses e LEFT JOIN categories cat ON cat.id = e.category_id
+                ' . $where . ' GROUP BY e.category_id, cat.name ORDER BY total DESC';
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    public static function byProject(array $filters = []): array
+    {
+        [$where, $params] = self::whereClause($filters);
+        $sql = 'SELECT p.id AS id, p.name AS name, COALESCE(SUM(e.amount_tzs),0) AS total
+                FROM expenses e LEFT JOIN projects p ON p.id = e.project_id
+                ' . $where . ' GROUP BY e.project_id, p.id, p.name ORDER BY total DESC';
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public static function delete(int $id): void
     {
         $stmt = Database::pdo()->prepare('DELETE FROM expenses WHERE id = :id');
