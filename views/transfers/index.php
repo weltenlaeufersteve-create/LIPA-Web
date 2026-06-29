@@ -4,7 +4,7 @@
     <a class="btn btn-primary" href="/transfers/new">New transfer</a>
   <?php endif; ?>
 </div>
-<form method="get" action="/transfers" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">
+<form method="get" action="/transfers" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-bottom:18px">
   <label style="margin:0">From <input type="date" name="date_from" value="<?= e($f['date_from']) ?>"></label>
   <label style="margin:0">To <input type="date" name="date_to" value="<?= e($f['date_to']) ?>"></label>
   <button class="btn" type="submit">Filter</button>

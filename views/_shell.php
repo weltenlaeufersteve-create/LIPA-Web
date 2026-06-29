@@ -17,25 +17,31 @@
       <button class="hamburger" data-nav-toggle aria-label="Menu">&#9776;</button>
       <span class="sidebar-brand">LIPA</span>
     </header>
+    <button type="button" id="theme-toggle" class="theme-toggle-fixed" aria-label="Toggle theme" title="Toggle theme">🌙</button>
     <div class="scrim"></div>
     <aside class="sidebar">
       <div class="sidebar-brand">LIPA</div>
       <div class="sidebar-tagline">Income &amp; Expenses for small NGOs</div>
-      <nav>
+      <nav class="nav-main">
         <a href="/">Dashboard</a>
-        <a href="/income">Income</a>
-        <a href="/expenses">Expenses</a>
-        <a href="/transfers">Transfers</a>
-        <a href="/contacts">Contacts</a>
-        <?php if (Auth::is('admin','editor')): ?><a href="/projects">Projects</a><?php endif; ?>
-        <a href="/reports">Reports</a>
-        <?php if (Auth::is('admin')): ?>
-          <a href="/settings">Settings</a>
-        <?php endif; ?>
-        <?php if (Auth::is('admin','viewer')): ?><a href="/activity">Activity log</a><?php endif; ?>
+        <div class="nav-group">
+          <a href="/income">Income</a>
+          <a href="/expenses">Expenses</a>
+          <a href="/transfers">Transfers</a>
+        </div>
+        <div class="nav-group">
+          <a href="/contacts">Contacts</a>
+          <?php if (Auth::is('admin','editor')): ?><a href="/projects">Projects</a><?php endif; ?>
+          <a href="/reports">Reports</a>
+        </div>
       </nav>
-      <div class="sidebar-footer">
-        <button type="button" id="theme-toggle" class="btn theme-toggle" aria-label="Toggle theme">🌙 Dark mode</button>
+      <div class="sidebar-bottom">
+        <?php if (Auth::is('admin','viewer')): ?>
+          <nav class="nav-bottom">
+            <?php if (Auth::is('admin')): ?><a href="/settings">Settings</a><?php endif; ?>
+            <?php if (Auth::is('admin','viewer')): ?><a href="/activity">Activity log</a><?php endif; ?>
+          </nav>
+        <?php endif; ?>
         <form method="post" action="/logout" class="sidebar-logout">
           <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
           <button type="submit" class="btn">Log out</button>

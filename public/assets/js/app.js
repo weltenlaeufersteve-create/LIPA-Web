@@ -13,7 +13,10 @@ function showToast(message, type = 'success') {
 function applyTheme(t) {
   document.documentElement.setAttribute('data-theme', t);
   var b = document.getElementById('theme-toggle');
-  if (b) { b.textContent = t === 'dark' ? '☀ Light mode' : '🌙 Dark mode'; }
+  if (b) {
+    b.textContent = t === 'dark' ? '☀' : '🌙';
+    b.title = t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  }
 }
 document.addEventListener('DOMContentLoaded', function () {
   var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';

@@ -8,18 +8,14 @@
 <p><strong>Total (TZS): <?= number_format($total, 2) ?></strong></p>
 <div class="table-wrap">
 <table class="data-table">
-  <thead><tr><th>Date</th><th>Donor</th><th>Category</th><th>Project</th><th>Account</th><th>Description</th><th>Currency</th><th>Amount (orig.)</th><th>Amount (TZS)</th><th>Receipt</th><th></th></tr></thead>
+  <thead><tr><th>Date</th><th>Donor</th><th>Category</th><th>Account</th><th>Amount (TZS)</th><th>Receipt</th><th></th></tr></thead>
   <tbody>
   <?php foreach ($rows as $row): ?>
     <tr>
       <td><?= e($row['date']) ?></td>
       <td><?= e($row['contact_name']) ?></td>
       <td><?= e($row['category_name']) ?></td>
-      <td><?= e($row['project_name']) ?></td>
       <td><?= e($row['account_name']) ?></td>
-      <td><?= e($row['description']) ?></td>
-      <td><?= e($row['currency']) ?></td>
-      <td><?= number_format((float)$row['amount_original'], 2) ?></td>
       <td><?= number_format((float)$row['amount_tzs'], 2) ?></td>
       <td><?php if (!empty($row['receipt_path'])): ?><a href="/income/<?= (int)$row['id'] ?>/receipt">View</a><?php endif; ?></td>
       <td style="text-align:right">
