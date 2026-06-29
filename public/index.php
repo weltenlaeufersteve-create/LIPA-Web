@@ -19,6 +19,7 @@ use App\Controllers\IncomeController;
 use App\Controllers\ExpenseController;
 use App\Controllers\SettingController;
 use App\Controllers\ReportController;
+use App\Controllers\ActivityController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -92,6 +93,9 @@ $router->add('POST', '/settings', fn() => (new SettingController())->save());
 // Reports + Excel export
 $router->add('GET', '/reports',        fn() => (new ReportController())->index());
 $router->add('GET', '/reports/export', fn() => (new ReportController())->export());
+
+// Activity log (admin, viewer)
+$router->add('GET', '/activity', fn() => (new ActivityController())->index());
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
