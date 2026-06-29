@@ -1,5 +1,8 @@
 vendor/
 .env
+.env.testing
 *.log
 public/uploads/*
 !public/uploads/.gitkeep
+.phpunit.result.cache
+/.phpunit.cache/
