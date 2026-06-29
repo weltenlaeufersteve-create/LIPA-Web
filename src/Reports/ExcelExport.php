@@ -29,22 +29,22 @@ final class ExcelExport
 
         // 2. Income
         $s = $book->createSheet(); $s->setTitle('Income');
-        $s->fromArray(['Date','Donor','Category','Project','Description','Currency','Amount (orig.)','Exchange rate','Amount (TZS)','Reference'], null, 'A1');
+        $s->fromArray(['Date','Donor','Category','Project','Account','Description','Currency','Amount (orig.)','Exchange rate','Amount (TZS)','Reference'], null, 'A1');
         $row = 2;
         foreach ($income as $r) {
             $s->fromArray([
-                $r['date'], $r['contact_name'], $r['category_name'], $r['project_name'], $r['description'],
+                $r['date'], $r['contact_name'], $r['category_name'], $r['project_name'], $r['account_name'], $r['description'],
                 $r['currency'], (float)$r['amount_original'], (float)$r['exchange_rate'], (float)$r['amount_tzs'], $r['reference'],
             ], null, 'A' . $row++);
         }
 
         // 3. Expenses
         $s = $book->createSheet(); $s->setTitle('Expenses');
-        $s->fromArray(['Date','Vendor','Category','Project','Description','Amount (TZS)','Reference'], null, 'A1');
+        $s->fromArray(['Date','Vendor','Category','Project','Account','Description','Amount (TZS)','Reference'], null, 'A1');
         $row = 2;
         foreach ($expense as $r) {
             $s->fromArray([
-                $r['date'], $r['contact_name'], $r['category_name'], $r['project_name'], $r['description'],
+                $r['date'], $r['contact_name'], $r['category_name'], $r['project_name'], $r['account_name'], $r['description'],
                 (float)$r['amount_tzs'], $r['reference'],
             ], null, 'A' . $row++);
         }
@@ -71,6 +71,25 @@ final class ExcelExport
         foreach ($proj as $name => $v) {
             $inc = $v['inc'] ?? 0; $exp = $v['exp'] ?? 0;
             $s->fromArray([$name, $inc, $exp, $inc - $exp], null, 'A' . $row++);
+        }
+
+        // 7. Transfers
+        $s = $book->createSheet(); $s->setTitle('Transfers');
+        $s->fromArray(['Date','From','To','Amount (TZS)','Description'], null, 'A1');
+        $row = 2;
+        foreach (\App\Models\Transfer::all($filters) as $t) {
+            $s->fromArray([$t['date'], $t['from_name'], $t['to_name'], (float)$t['amount_tzs'], $t['description']], null, 'A' . $row++);
+        }
+
+        // 8. By account (opening + closing as at date_to)
+        $s = $book->createSheet(); $s->setTitle('By account');
+        $s->fromArray(['Account','Opening (TZS)','Closing (TZS)'], null, 'A1');
+        $row = 2;
+        foreach (\App\Models\Account::all(true) as $a) {
+            $s->fromArray([
+                $a['name'], (float)$a['opening_balance'],
+                \App\Models\Account::balance((int)$a['id'], $filters['date_to'] ?? null),
+            ], null, 'A' . $row++);
         }
 
         $book->setActiveSheetIndex(0);
