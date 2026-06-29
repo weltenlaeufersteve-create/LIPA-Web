@@ -1,14 +1,14 @@
-<div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
-  <h1>Contacts</h1>
+<h1>Contacts</h1>
+<div class="list-toolbar">
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn" href="/contacts">All</a>
+    <a class="btn" href="/contacts?type=donor">Donors</a>
+    <a class="btn" href="/contacts?type=vendor">Vendors</a>
+  </div>
   <?php if (App\Auth::is('admin','editor')): ?>
-    <a class="btn btn-primary" href="/contacts/new">New contact</a>
+    <a class="btn btn-primary list-new" href="/contacts/new">New contact</a>
   <?php endif; ?>
 </div>
-<p>
-  <a class="btn" href="/contacts">All</a>
-  <a class="btn" href="/contacts?type=donor">Donors</a>
-  <a class="btn" href="/contacts?type=vendor">Vendors</a>
-</p>
 <div class="table-wrap">
 <table class="data-table">
   <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Phone</th><th>Active</th><th></th></tr></thead>

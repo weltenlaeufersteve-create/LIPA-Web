@@ -1,10 +1,10 @@
-<div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
-  <h1>Expenses</h1>
+<h1>Expenses</h1>
+<div class="list-toolbar">
+  <?php $action = '/expenses'; include dirname(__DIR__) . '/_filters.php'; ?>
   <?php if (App\Auth::is('admin','editor')): ?>
-    <a class="btn btn-primary" href="/expenses/new">New expense</a>
+    <a class="btn btn-primary list-new" href="/expenses/new">New expense</a>
   <?php endif; ?>
 </div>
-<?php $action = '/expenses'; include dirname(__DIR__) . '/_filters.php'; ?>
 <p><strong>Total (TZS): <?= number_format($total, 2) ?></strong></p>
 <div class="table-wrap">
 <table class="data-table">

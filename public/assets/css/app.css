@@ -53,6 +53,11 @@ a { color: var(--accent, #22c55e); }
 .content { flex: 1; padding: 24px; min-width: 0; }
 /* leave room at the right so the fixed theme toggle never covers page actions */
 .page-header { padding-right: 52px; }
+/* filter row with the New button aligned right on the same line */
+.list-toolbar { display: flex; justify-content: space-between; align-items: flex-end;
+                gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.list-toolbar > form { margin-bottom: 0; }
+.list-toolbar .list-new { margin-left: auto; white-space: nowrap; }
 
 /* Forms & buttons (touch-friendly) */
 label { display: block; margin: 12px 0; }
