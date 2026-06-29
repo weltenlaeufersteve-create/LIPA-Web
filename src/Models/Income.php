@@ -15,10 +15,10 @@ final class Income
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
             'INSERT INTO income
-             (date, contact_id, project_id, category_id, description, currency,
+             (date, contact_id, project_id, category_id, account_id, description, currency,
               amount_original, exchange_rate, amount_tzs, reference, receipt_path, notes, created_by)
              VALUES
-             (:date, :contact_id, :project_id, :category_id, :description, :currency,
+             (:date, :contact_id, :project_id, :category_id, :account_id, :description, :currency,
               :amount_original, :exchange_rate, :amount_tzs, :reference, :receipt_path, :notes, :created_by)'
         );
         $stmt->execute(self::bind($data) + [':created_by' => $data['created_by'] ?: null]);
@@ -31,7 +31,7 @@ final class Income
             'UPDATE income SET date=:date, contact_id=:contact_id, project_id=:project_id,
              category_id=:category_id, description=:description, currency=:currency,
              amount_original=:amount_original, exchange_rate=:exchange_rate, amount_tzs=:amount_tzs,
-             reference=:reference, notes=:notes WHERE id=:id'
+             reference=:reference, notes=:notes, account_id=:account_id WHERE id=:id'
         );
         $params = self::bind($data);
         unset($params[':receipt_path']); // receipts handled by setReceipt()
@@ -53,6 +53,7 @@ final class Income
             ':reference'=>$d['reference'] ?: null,
             ':receipt_path'=>$d['receipt_path'] ?? null,
             ':notes'=>$d['notes'] ?: null,
+            ':account_id'=>$d['account_id'] ?: null,
         ];
     }
 
@@ -72,11 +73,12 @@ final class Income
     public static function all(array $filters = []): array
     {
         [$where, $params] = self::whereClause($filters);
-        $sql = 'SELECT i.*, c.name AS contact_name, p.name AS project_name, cat.name AS category_name
+        $sql = 'SELECT i.*, c.name AS contact_name, p.name AS project_name, cat.name AS category_name, a.name AS account_name
                 FROM income i
                 LEFT JOIN contacts c   ON c.id = i.contact_id
                 LEFT JOIN projects p   ON p.id = i.project_id
                 LEFT JOIN categories cat ON cat.id = i.category_id
+                LEFT JOIN accounts a   ON a.id = i.account_id
                 ' . $where . ' ORDER BY i.date DESC, i.id DESC';
         $stmt = Database::pdo()->prepare($sql);
         $stmt->execute($params);

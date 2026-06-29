@@ -10,9 +10,9 @@ final class Expense
         $pdo = Database::pdo();
         $stmt = $pdo->prepare(
             'INSERT INTO expenses
-             (date, contact_id, project_id, category_id, description, amount_tzs, reference, receipt_path, notes, created_by)
+             (date, contact_id, project_id, category_id, account_id, description, amount_tzs, reference, receipt_path, notes, created_by)
              VALUES
-             (:date, :contact_id, :project_id, :category_id, :description, :amount_tzs, :reference, :receipt_path, :notes, :created_by)'
+             (:date, :contact_id, :project_id, :category_id, :account_id, :description, :amount_tzs, :reference, :receipt_path, :notes, :created_by)'
         );
         $stmt->execute(self::bind($data) + [':created_by'=>$data['created_by'] ?: null]);
         return (int)$pdo->lastInsertId();
@@ -23,7 +23,7 @@ final class Expense
         $stmt = Database::pdo()->prepare(
             'UPDATE expenses SET date=:date, contact_id=:contact_id, project_id=:project_id,
              category_id=:category_id, description=:description, amount_tzs=:amount_tzs,
-             reference=:reference, notes=:notes WHERE id=:id'
+             reference=:reference, notes=:notes, account_id=:account_id WHERE id=:id'
         );
         $params = self::bind($data);
         unset($params[':receipt_path']);
@@ -42,6 +42,7 @@ final class Expense
             ':reference'=>$d['reference'] ?: null,
             ':receipt_path'=>$d['receipt_path'] ?? null,
             ':notes'=>$d['notes'] ?: null,
+            ':account_id'=>$d['account_id'] ?: null,
         ];
     }
 
@@ -61,11 +62,12 @@ final class Expense
     public static function all(array $filters = []): array
     {
         [$where, $params] = self::whereClause($filters);
-        $sql = 'SELECT e.*, c.name AS contact_name, p.name AS project_name, cat.name AS category_name
+        $sql = 'SELECT e.*, c.name AS contact_name, p.name AS project_name, cat.name AS category_name, a.name AS account_name
                 FROM expenses e
                 LEFT JOIN contacts c   ON c.id = e.contact_id
                 LEFT JOIN projects p   ON p.id = e.project_id
                 LEFT JOIN categories cat ON cat.id = e.category_id
+                LEFT JOIN accounts a   ON a.id = e.account_id
                 ' . $where . ' ORDER BY e.date DESC, e.id DESC';
         $stmt = Database::pdo()->prepare($sql);
         $stmt->execute($params);

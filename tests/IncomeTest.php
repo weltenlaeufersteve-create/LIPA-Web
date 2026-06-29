@@ -71,4 +71,14 @@ final class IncomeTest extends DatabaseTestCase
         Income::delete($id);
         $this->assertNull(Income::find($id));
     }
+
+    public function test_account_id_round_trip_and_join(): void
+    {
+        $acc = \App\Models\Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
+        $id = Income::create(['date'=>'2026-03-01','contact_id'=>null,'project_id'=>null,'category_id'=>null,
+            'description'=>'x','currency'=>'TZS','amount_original'=>10,'exchange_rate'=>1,'amount_tzs'=>10,
+            'reference'=>'','notes'=>'','created_by'=>null,'account_id'=>$acc]);
+        $this->assertEquals($acc, (int)Income::find($id)['account_id']);
+        $this->assertSame('Bank', Income::all()[0]['account_name']);
+    }
 }

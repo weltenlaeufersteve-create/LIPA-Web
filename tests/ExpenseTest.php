@@ -57,4 +57,13 @@ final class ExpenseTest extends DatabaseTestCase
         Expense::delete($id);
         $this->assertNull(Expense::find($id));
     }
+
+    public function test_account_id_round_trip_and_join(): void
+    {
+        $acc = \App\Models\Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
+        $id = Expense::create(['date'=>'2026-03-01','contact_id'=>null,'project_id'=>null,'category_id'=>null,
+            'description'=>'x','amount_tzs'=>10,'reference'=>'','notes'=>'','created_by'=>null,'account_id'=>$acc]);
+        $this->assertEquals($acc, (int)Expense::find($id)['account_id']);
+        $this->assertSame('Bank', Expense::all()[0]['account_name']);
+    }
 }
