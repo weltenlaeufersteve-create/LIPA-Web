@@ -33,7 +33,7 @@
   <div class="muted">
     <?php if (!empty($s['tax_id'])): ?>Tax ID: <?= e($s['tax_id']) ?><?php endif; ?>
     <?php if (!empty($s['tax_id']) && !empty($s['ngo_number'])): ?> &middot; <?php endif; ?>
-    <?php if (!empty($s['ngo_number'])): ?>NGO Reg. No: <?= e($s['ngo_number']) ?><?php endif; ?>
+    <?php if (!empty($s['ngo_number'])): ?>Reg. No: <?= e($s['ngo_number']) ?><?php endif; ?>
   </div>
 <?php endif; ?>
 
