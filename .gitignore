@@ -10,3 +10,5 @@ public/uploads/*
 storage/receipts/*
 !storage/receipts/.gitkeep
 .deploy-secrets
+id_rsa
+id_rsa.pub
