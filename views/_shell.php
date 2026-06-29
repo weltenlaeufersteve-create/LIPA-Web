@@ -51,9 +51,7 @@
           <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
           <button type="submit" class="btn">Log out</button>
         </form>
-        <div class="powered-by">Powered by <strong>LIPA</strong>
-          <div class="powered-tag">Income &amp; Expenses for small NGOs</div>
-        </div>
+        <div class="powered-by">Powered by <strong>LIPA</strong> — <span class="powered-tag">Income &amp; Expenses for small NGOs</span></div>
       </div>
     </aside>
     <main class="content"><?= $content ?></main>

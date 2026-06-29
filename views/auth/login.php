@@ -13,5 +13,5 @@
     <label>Password <input type="password" name="password" required></label>
     <button type="submit" class="btn btn-primary">Sign in</button>
   </form>
-  <p class="login-powered">Powered by <strong>LIPA</strong><br>Income &amp; Expenses for small NGOs</p>
+  <p class="login-powered">Powered by <strong>LIPA</strong> — Income &amp; Expenses for small NGOs</p>
 </div>

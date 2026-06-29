@@ -22,7 +22,7 @@ a { color: var(--accent, #22c55e); }
 .powered-by { font-size: .7rem; color: var(--text-muted, #a0a0a8); padding-top: 10px;
               border-top: 1px solid var(--border, rgba(0,0,0,.08)); margin-top: 4px; }
 .powered-by strong { color: var(--text-secondary, #6b6b70); letter-spacing: .03em; }
-.powered-tag { color: var(--accent, #22c55e); font-weight: 600; margin-top: 2px; }
+.powered-tag { color: var(--accent, #22c55e); font-weight: 600; }
 /* Login branding */
 .login-org { margin: 0 0 4px; }
 .login-logo { max-height: 72px; max-width: 80%; margin: 0 auto 6px; display: block; }
