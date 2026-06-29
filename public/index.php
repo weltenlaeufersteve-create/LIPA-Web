@@ -14,6 +14,7 @@ use App\Controllers\DashboardController;
 use App\Controllers\UserController;
 use App\Controllers\ContactController;
 use App\Controllers\ProjectController;
+use App\Controllers\CategoryController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -51,6 +52,14 @@ $router->add('POST', '/projects',            fn() => (new ProjectController())->
 $router->add('GET',  '/projects/:id/edit',   fn($p) => (new ProjectController())->edit((int)$p['id']));
 $router->add('POST', '/projects/:id',        fn($p) => (new ProjectController())->update((int)$p['id']));
 $router->add('POST', '/projects/:id/delete', fn($p) => (new ProjectController())->delete((int)$p['id']));
+
+// Categories (admin)
+$router->add('GET',  '/categories',            fn() => (new CategoryController())->index());
+$router->add('GET',  '/categories/new',        fn() => (new CategoryController())->create());
+$router->add('POST', '/categories',            fn() => (new CategoryController())->store());
+$router->add('GET',  '/categories/:id/edit',   fn($p) => (new CategoryController())->edit((int)$p['id']));
+$router->add('POST', '/categories/:id',        fn($p) => (new CategoryController())->update((int)$p['id']));
+$router->add('POST', '/categories/:id/delete', fn($p) => (new CategoryController())->delete((int)$p['id']));
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
