@@ -42,7 +42,7 @@ final class Expense
             ':reference'=>$d['reference'] ?: null,
             ':receipt_path'=>$d['receipt_path'] ?? null,
             ':notes'=>$d['notes'] ?: null,
-            ':account_id'=>$d['account_id'] ?: null,
+            ':account_id'=>(!empty($d['account_id']) ? $d['account_id'] : null),
         ];
     }
 
