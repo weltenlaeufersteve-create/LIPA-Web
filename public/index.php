@@ -18,6 +18,7 @@ use App\Controllers\CategoryController;
 use App\Controllers\IncomeController;
 use App\Controllers\ExpenseController;
 use App\Controllers\SettingController;
+use App\Controllers\ReportController;
 
 $root = dirname(__DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($root);
@@ -87,6 +88,10 @@ $router->add('GET', '/expenses/:id/receipt', fn($p) => (new ExpenseController())
 // Settings (admin)
 $router->add('GET',  '/settings', fn() => (new SettingController())->index());
 $router->add('POST', '/settings', fn() => (new SettingController())->save());
+
+// Reports + Excel export
+$router->add('GET', '/reports',        fn() => (new ReportController())->index());
+$router->add('GET', '/reports/export', fn() => (new ReportController())->export());
 
 try {
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);

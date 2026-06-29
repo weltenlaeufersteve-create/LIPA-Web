@@ -22,6 +22,10 @@ NGO income/expense tracker (QuickBooks replacement) for Pepea. Plain PHP + Maria
 - Subdomain `lipa.pepea-africa.org`, document root = `public/`.
 - `git pull` over SSH, `composer install --no-dev`, load `db/schema.sql`, create `.env` outside `public/`.
 - Create first admin via `php bin/create-admin.php`.
+- Optionally seed starter categories: `php bin/seed-categories.php`.
+- **Required PHP extensions:** `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `gd`, `zip`
+  (`gd` + `zip` are needed by PhpSpreadsheet for the Excel export).
+- Ensure `storage/receipts/` is writable by PHP and **not** served by the web root.
 
 ## Roles
 - **admin** — full access incl. users, settings, categories.
