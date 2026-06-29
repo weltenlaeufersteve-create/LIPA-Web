@@ -82,6 +82,7 @@ final class IncomeController
             'contacts'=>Contact::all('donor'),
             'projects'=>Project::all(),
             'categories'=>Category::all('income'),
+            'accounts'=>\App\Models\Account::all(true),
         ];
     }
 
@@ -102,12 +103,14 @@ final class IncomeController
             'amount_tzs'=>Income::tzsValue($amount, $rate),
             'reference'=>trim($in['reference'] ?? ''),
             'notes'=>trim($in['notes'] ?? ''),
+            'account_id'=>$in['account_id'] ?? null,
         ];
     }
 
     private function validate(array $in): ?string
     {
         if (empty($in['date']) || !\DateTime::createFromFormat('Y-m-d', $in['date'])) return 'A valid date is required.';
+        if (empty($in['account_id'])) return 'An account is required.';
         if (!is_numeric($in['amount_original'] ?? null) || (float)$in['amount_original'] <= 0) return 'Amount must be greater than zero.';
         if (($in['currency'] ?? 'TZS') === 'USD' && (!is_numeric($in['exchange_rate'] ?? null) || (float)$in['exchange_rate'] <= 0)) {
             return 'Exchange rate must be greater than zero for USD.';

@@ -27,6 +27,14 @@
       <?php endforeach; ?>
     </select>
   </label>
+  <label>Account
+    <select name="account_id" required>
+      <option value="">—</option>
+      <?php foreach ($accounts as $acc): ?>
+        <option value="<?= (int)$acc['id'] ?>" <?= ((int)($r['account_id'] ?? ($accounts[0]['id'] ?? 0)) === (int)$acc['id']) ? 'selected' : '' ?>><?= e($acc['name']) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </label>
   <label>Description <input name="description" value="<?= e($r['description'] ?? '') ?>"></label>
   <label>Currency
     <select name="currency">

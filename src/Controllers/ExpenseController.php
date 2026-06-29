@@ -82,6 +82,7 @@ final class ExpenseController
             'contacts'=>Contact::all('vendor'),
             'projects'=>Project::all(),
             'categories'=>Category::all('expense'),
+            'accounts'=>\App\Models\Account::all(true),
         ];
     }
 
@@ -96,12 +97,14 @@ final class ExpenseController
             'amount_tzs'=>(float)($in['amount_tzs'] ?? 0),
             'reference'=>trim($in['reference'] ?? ''),
             'notes'=>trim($in['notes'] ?? ''),
+            'account_id'=>$in['account_id'] ?? null,
         ];
     }
 
     private function validate(array $in): ?string
     {
         if (empty($in['date']) || !\DateTime::createFromFormat('Y-m-d', $in['date'])) return 'A valid date is required.';
+        if (empty($in['account_id'])) return 'An account is required.';
         if (!is_numeric($in['amount_tzs'] ?? null) || (float)$in['amount_tzs'] <= 0) return 'Amount must be greater than zero.';
         return null;
     }
