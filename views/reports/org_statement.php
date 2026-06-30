@@ -17,7 +17,15 @@
   .summary strong{display:block;font-size:1.15rem;margin-top:2px;}
   .actions{margin:0 0 18px;}
   .btn{padding:8px 14px;border:1px solid #ccc;border-radius:6px;background:#f5f5f5;cursor:pointer;text-decoration:none;color:#111;font-size:.9rem;}
-  @media print { .actions{display:none;} body{padding:0;} }
+  @page { margin: 14mm; }
+  @media print {
+    .actions { display: none; }
+    body { padding: 0; max-width: none; }
+    thead { display: table-header-group; }            /* repeat column headers on each page */
+    tr { break-inside: avoid; page-break-inside: avoid; }
+    h2, h3 { break-after: avoid; page-break-after: avoid; }
+    .summary { break-inside: avoid; page-break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
