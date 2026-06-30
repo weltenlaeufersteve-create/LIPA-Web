@@ -98,6 +98,16 @@ $router->add('GET', '/reports/export', fn() => (new ReportController())->export(
 $router->add('GET', '/reports/statement', fn() => (new ReportController())->statement());
 $router->add('GET', '/reports/org-statement', fn() => (new ReportController())->orgStatement());
 
+// Activities
+$router->add('GET',  '/activities',                       fn() => (new ActivityController())->index());
+$router->add('GET',  '/activities/new',                   fn() => (new ActivityController())->create());
+$router->add('POST', '/activities',                       fn() => (new ActivityController())->store());
+$router->add('GET',  '/activities/:id/edit',              fn($p) => (new ActivityController())->edit((int)$p['id']));
+$router->add('POST', '/activities/:id',                   fn($p) => (new ActivityController())->update((int)$p['id']));
+$router->add('POST', '/activities/:id/delete',            fn($p) => (new ActivityController())->delete((int)$p['id']));
+$router->add('GET',  '/activities/:id/photo/:pid',        fn($p) => (new ActivityController())->photo((int)$p['id'], (int)$p['pid']));
+$router->add('POST', '/activities/:id/photo/:pid/delete', fn($p) => (new ActivityController())->deletePhoto((int)$p['id'], (int)$p['pid']));
+
 // Activity log (admin, viewer)
 $router->add('GET', '/activity', fn() => (new ActivityController())->index());
 

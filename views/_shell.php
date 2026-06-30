@@ -42,6 +42,7 @@
         <div class="nav-group">
           <a href="/contacts">Contacts</a>
           <?php if (Auth::is('admin','editor')): ?><a href="/projects">Projects</a><?php endif; ?>
+          <a href="/activities">Activities</a>
           <a href="/reports">Reports</a>
         </div>
       </nav>
