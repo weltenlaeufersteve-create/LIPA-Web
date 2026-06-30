@@ -116,6 +116,20 @@ final class Expense
         return $stmt->fetchAll();
     }
 
+    public static function availableForActivity(?int $activityId): array
+    {
+        $pdo = Database::pdo();
+        $stmt = $pdo->prepare(
+            'SELECT e.*, cat.name AS category_name
+             FROM expenses e LEFT JOIN categories cat ON cat.id = e.category_id
+             WHERE e.activity_id IS NULL OR e.activity_id = :aid
+             ORDER BY e.date DESC, e.id DESC'
+        );
+        $stmt->bindValue(':aid', (int)$activityId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public static function delete(int $id): void
     {
         $stmt = Database::pdo()->prepare('DELETE FROM expenses WHERE id = :id');

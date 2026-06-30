@@ -55,13 +55,15 @@ bin/create-admin.php    bin/seed-categories.php    bin/migrate.php (idempotent s
 tests/                  PHPUnit (DatabaseTestCase builds schema in lipa_test)
 ```
 
-## Data model (10 tables)
+## Data model (12 tables)
 `users` (role admin/editor/viewer), `contacts` (type donor/vendor), `projects`,
 `categories` (type income/expense), `accounts` (type bank/cash/other + opening_balance +
 opening_balance_date; TZS), `income` (currency TZS/USD + amount_original, exchange_rate,
 amount_tzs; `account_id`; receipt_path), `expenses` (amount_tzs only; `account_id`;
-receipt_path), `transfers` (from_account_id/to_account_id, amount_tzs — money moved
-between accounts, NOT income/expense), `settings` (key-value), `activity_log`.
+`activity_id`; receipt_path), `transfers` (from_account_id/to_account_id, amount_tzs — money
+moved between accounts, NOT income/expense), `activities` (date/title/description/project_id —
+NGO activity reports) + `activity_photos` (resized JPEGs in storage/activity_photos, served
+via authed route), `settings` (key-value), `activity_log`.
 Money = `DECIMAL(15,2)`; base currency **TZS** (USD only on income, snapshot rate).
 FKs `ON DELETE SET NULL`. **Account balances are TZS** (`Account::balance()` = opening +
 income − expenses + transfers-in − transfers-out, optional `asOf` date).
@@ -77,6 +79,23 @@ income − expenses + transfers-in − transfers-out, optional `asOf` date).
   donor as a **Project**; tag its income AND the expenses paid from it to that project.
 - **Filters** on income/expense lists: date range, project, category, **account**
   (shared `views/_filters.php`; `Income`/`Expense` `whereClause` supports all four).
+
+## Activities (NGO activity reports)
+- **Activities** (own nav item under Projects; view = all roles, create/edit/delete =
+  admin/editor). An activity = date/title/description/optional project + up to **5 photos** +
+  linked expenses. Model is **`App\Models\ActivityItem`** (table `activities`) — named to
+  avoid the clash with the existing audit-log model `App\Models\Activity`.
+- **Photos:** `App\ImageStorage` (GD) resizes uploads to ≤1600 px long edge, JPEG ~80 %, into
+  `storage/activity_photos/` (outside webroot, gitignored). Served via authed route
+  `/activities/:id/photo/:pid`. Max 5 per activity, deletable individually.
+- **Linking is Activity → Expense:** the expense picker lives on the activity form
+  (`ActivityItem::setExpenses` sets/clears `expenses.activity_id`; `Expense::availableForActivity`
+  lists unassigned + already-linked). No activity field on the expense form. One activity → many
+  expenses; `ActivityItem::cost()` sums them.
+- **Activity report:** Reports → period (+ optional project) → standalone printable page
+  (`reports/activity_report.php`, `App\Reports\ActivityReport::build`) with each activity's
+  description, photos, linked expenses + cost, and a grand total. Same print/page-break CSS as
+  the other statements.
 
 ## Roles
 - **admin** — everything incl. Users, Settings, Categories, Accounts (consolidated under a

@@ -12,3 +12,6 @@ storage/receipts/*
 .deploy-secrets
 id_rsa
 id_rsa.pub
+
+storage/activity_photos/*
+!storage/activity_photos/.gitkeep
