@@ -30,11 +30,12 @@ is the source of truth and is fully deployed. 54 PHPUnit tests green.
 ## Deploy an update
 Local: branch → build → user verifies at localhost → merge to `master` → push. Then:
 ```
-ssh pepeaempowerment@195.30.85.70    # key ~/.ssh/serverprofis_lipa (passphrase stripped)
+ssh <user>@<host>        # connection details + key in local .deploy-secrets (gitignored)
 cd ~/lipa_app && git pull && composer install --no-dev
 php bin/migrate.php   # only if the change touched the schema
 ```
-Docroot symlinks persist. Secrets live ONLY in local `.deploy-secrets` (gitignored).
+Docroot symlinks persist. **All host/SSH/DB credentials live ONLY in local
+`.deploy-secrets` (gitignored) — never in tracked files.**
 
 ## Run locally (Windows + Laragon)
 Prefix shell commands:
@@ -43,7 +44,7 @@ export PATH="$PATH:/c/laragon/bin/php/php-8.3.30-Win32-vs16-x64:/c/laragon/bin/c
 ```
 - MySQL: manual `mysqld --datadir=C:\laragon\bin\mysql\mysql-8.4.3-winx64\data` if down; DBs `lipa` + `lipa_test`.
 - Serve: `php -S 0.0.0.0:8000 -t public` → http://localhost:8000
-- Local admin: `admin@pepea-africa.org` / `Pepea2026!`
+- Local admin: `admin@pepea-africa.org` (password in local `.deploy-secrets`)
 - Tests: `composer test`.
 
 ## Working agreement

@@ -15,3 +15,6 @@ id_rsa.pub
 
 storage/activity_photos/*
 !storage/activity_photos/.gitkeep
+
+# Claude project context (contains local notes; keep out of repo)
+CLAUDE.md
