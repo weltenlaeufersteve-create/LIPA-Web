@@ -1,6 +1,6 @@
 # LIPA Web — Organisation Statement — Design Spec
 
-**Date:** 2026-06-29
+**Date:** 2026-06-30
 **Status:** Approved design — pending implementation plan
 
 ## Purpose
