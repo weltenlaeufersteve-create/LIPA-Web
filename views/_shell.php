@@ -17,7 +17,6 @@
       <button class="hamburger" data-nav-toggle aria-label="Menu">&#9776;</button>
       <span class="sidebar-brand"><?= e($orgName !== '' ? $orgName : 'LIPA') ?></span>
     </header>
-    <button type="button" id="theme-toggle" class="theme-toggle-fixed" aria-label="Toggle theme" title="Toggle theme">🌙</button>
     <div class="scrim"></div>
     <aside class="sidebar">
       <div class="sidebar-brand ngo-brand">
@@ -53,14 +52,17 @@
             <?php if (Auth::is('admin','viewer')): ?><a href="/activity">Activity log</a><?php endif; ?>
           </nav>
         <?php endif; ?>
-        <form method="post" action="/logout" class="sidebar-logout">
-          <span><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
-          <button type="submit" class="btn">Log out</button>
-        </form>
         <div class="powered-by">Powered by <strong>LIPA</strong> — <span class="powered-tag">Income &amp; Expenses for small NGOs</span></div>
       </div>
     </aside>
-    <main class="content"><?= $content ?></main>
+    <main class="content">
+      <div class="account-bar">
+        <span class="account-name"><?= e($user['name']) ?> (<?= e($user['role']) ?>)</span>
+        <form method="post" action="/logout" style="margin:0"><button type="submit" class="btn">Log out</button></form>
+        <button type="button" id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+      </div>
+      <?= $content ?>
+    </main>
   </div>
 <?php else: ?>
   <?= $content ?>
