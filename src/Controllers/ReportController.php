@@ -54,4 +54,19 @@ final class ReportController
         include dirname(__DIR__, 2) . '/views/reports/statement.php';
         return ob_get_clean();
     }
+
+    public function orgStatement(): string
+    {
+        Auth::requireRole('admin','editor','viewer');
+        $from = $_GET['date_from'] ?? '';
+        $to   = $_GET['date_to'] ?? '';
+        if (!\DateTime::createFromFormat('Y-m-d', $from) || !\DateTime::createFromFormat('Y-m-d', $to)) {
+            return '<p style="font-family:sans-serif;padding:24px">Please choose valid dates. <a href="/reports">Back to Reports</a>.</p>';
+        }
+        $d = \App\Reports\OrgStatement::build($from, $to);
+        $s = \App\Models\Setting::all();
+        ob_start();
+        include dirname(__DIR__, 2) . '/views/reports/org_statement.php';
+        return ob_get_clean();
+    }
 }

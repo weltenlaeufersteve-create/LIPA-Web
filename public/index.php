@@ -96,6 +96,7 @@ $router->add('POST', '/settings', fn() => (new SettingController())->save());
 $router->add('GET', '/reports',        fn() => (new ReportController())->index());
 $router->add('GET', '/reports/export', fn() => (new ReportController())->export());
 $router->add('GET', '/reports/statement', fn() => (new ReportController())->statement());
+$router->add('GET', '/reports/org-statement', fn() => (new ReportController())->orgStatement());
 
 // Activity log (admin, viewer)
 $router->add('GET', '/activity', fn() => (new ActivityController())->index());
