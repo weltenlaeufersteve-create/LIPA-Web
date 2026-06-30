@@ -50,6 +50,26 @@ CREATE TABLE IF NOT EXISTS accounts (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS activities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE NOT NULL,
+  title VARCHAR(190) NOT NULL,
+  description TEXT NULL,
+  project_id INT NULL,
+  created_by INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_activity_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
+  CONSTRAINT fk_activity_creator FOREIGN KEY (created_by) REFERENCES users(id)    ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS activity_photos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  activity_id INT NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_photo_activity FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS income (
   id INT AUTO_INCREMENT PRIMARY KEY,
   date DATE NOT NULL,
@@ -81,6 +101,7 @@ CREATE TABLE IF NOT EXISTS expenses (
   project_id INT NULL,
   category_id INT NULL,
   account_id INT NULL,
+  activity_id INT NULL,
   description VARCHAR(255) NULL,
   amount_tzs DECIMAL(15,2) NOT NULL DEFAULT 0,
   reference VARCHAR(120) NULL,
@@ -92,6 +113,7 @@ CREATE TABLE IF NOT EXISTS expenses (
   CONSTRAINT fk_expense_project  FOREIGN KEY (project_id)  REFERENCES projects(id)  ON DELETE SET NULL,
   CONSTRAINT fk_expense_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
   CONSTRAINT fk_expense_account  FOREIGN KEY (account_id)  REFERENCES accounts(id)   ON DELETE SET NULL,
+  CONSTRAINT fk_expense_activity FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE SET NULL,
   CONSTRAINT fk_expense_user     FOREIGN KEY (created_by)  REFERENCES users(id)     ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

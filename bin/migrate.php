@@ -71,4 +71,32 @@ if ($bankId > 0) {
     $pdo->exec("UPDATE expenses SET account_id = {$bankId} WHERE account_id IS NULL");
     echo "backfilled income/expenses to account #{$bankId}\n";
 }
+$pdo->exec("CREATE TABLE IF NOT EXISTS activities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE NOT NULL,
+  title VARCHAR(190) NOT NULL,
+  description TEXT NULL,
+  project_id INT NULL,
+  created_by INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_activity_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
+  CONSTRAINT fk_activity_creator FOREIGN KEY (created_by) REFERENCES users(id)    ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+echo "activities table ok\n";
+
+$pdo->exec("CREATE TABLE IF NOT EXISTS activity_photos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  activity_id INT NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_photo_activity FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+echo "activity_photos table ok\n";
+
+if (!columnExists($pdo, 'expenses', 'activity_id')) {
+    $pdo->exec('ALTER TABLE expenses ADD COLUMN activity_id INT NULL,
+        ADD CONSTRAINT fk_expense_activity FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE SET NULL');
+    echo "expenses.activity_id added\n";
+} else { echo "expenses.activity_id exists\n"; }
+
 echo "migration complete\n";
