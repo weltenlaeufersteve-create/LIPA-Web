@@ -69,6 +69,26 @@ final class ExpenseTest extends DatabaseTestCase
         $this->assertEqualsWithDelta(100.0, Expense::totalTzs(['account_id'=>$cash]), 0.001);
     }
 
+    public function test_available_for_activity(): void
+    {
+        $base = ['contact_id'=>null,'project_id'=>null,'category_id'=>null,'description'=>'','reference'=>'','notes'=>'','created_by'=>null,'date'=>'2026-03-01'];
+        $free = Expense::create($base + ['amount_tzs'=>100]);
+        $mine = Expense::create($base + ['amount_tzs'=>200]);
+        $other = Expense::create($base + ['amount_tzs'=>300]);
+        $pdo = \App\Database::pdo();
+        $pdo->exec("INSERT INTO activities (date,title) VALUES ('2026-03-01','A')");
+        $aid = (int)$pdo->lastInsertId();
+        $pdo->exec("INSERT INTO activities (date,title) VALUES ('2026-03-01','B')");
+        $other_a = (int)$pdo->lastInsertId();
+        $pdo->exec("UPDATE expenses SET activity_id = $aid WHERE id = $mine");
+        $pdo->exec("UPDATE expenses SET activity_id = $other_a WHERE id = $other");
+
+        $ids = array_map(fn($r) => (int)$r['id'], Expense::availableForActivity($aid));
+        $this->assertContains($free, $ids);
+        $this->assertContains($mine, $ids);
+        $this->assertNotContains($other, $ids);
+    }
+
     public function test_account_id_round_trip_and_join(): void
     {
         $acc = \App\Models\Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
