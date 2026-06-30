@@ -21,3 +21,11 @@
   <label style="margin:0">To <input type="date" name="date_to" value="<?= e($date_to) ?>"></label>
   <button class="btn btn-primary" type="submit">Open statement</button>
 </form>
+
+<h2 style="margin-top:28px">Organisation statement</h2>
+<p>A printable whole-organisation Income &amp; Expenditure statement for a period (opens in a new tab → Print → Save as PDF).</p>
+<form method="get" action="/reports/org-statement" target="_blank" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap">
+  <label style="margin:0">From <input type="date" name="date_from" value="<?= e($date_from) ?>"></label>
+  <label style="margin:0">To <input type="date" name="date_to" value="<?= e($date_to) ?>"></label>
+  <button class="btn btn-primary" type="submit">Open statement</button>
+</form>
