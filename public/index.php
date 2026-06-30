@@ -97,6 +97,7 @@ $router->add('GET', '/reports',        fn() => (new ReportController())->index()
 $router->add('GET', '/reports/export', fn() => (new ReportController())->export());
 $router->add('GET', '/reports/statement', fn() => (new ReportController())->statement());
 $router->add('GET', '/reports/org-statement', fn() => (new ReportController())->orgStatement());
+$router->add('GET', '/reports/activity-report', fn() => (new ReportController())->activityReport());
 
 // Activities
 $router->add('GET',  '/activities',                       fn() => (new ActivityController())->index());

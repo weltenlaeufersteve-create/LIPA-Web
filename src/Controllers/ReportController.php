@@ -69,4 +69,20 @@ final class ReportController
         include dirname(__DIR__, 2) . '/views/reports/org_statement.php';
         return ob_get_clean();
     }
+
+    public function activityReport(): string
+    {
+        Auth::requireRole('admin','editor','viewer');
+        $from = $_GET['date_from'] ?? '';
+        $to   = $_GET['date_to'] ?? '';
+        if (!\DateTime::createFromFormat('Y-m-d', $from) || !\DateTime::createFromFormat('Y-m-d', $to)) {
+            return '<p style="font-family:sans-serif;padding:24px">Please choose valid dates. <a href="/reports">Back to Reports</a>.</p>';
+        }
+        $projectId = (int)($_GET['project_id'] ?? 0) ?: null;
+        $d = \App\Reports\ActivityReport::build($from, $to, $projectId);
+        $s = \App\Models\Setting::all();
+        ob_start();
+        include dirname(__DIR__, 2) . '/views/reports/activity_report.php';
+        return ob_get_clean();
+    }
 }
