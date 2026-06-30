@@ -18,9 +18,10 @@ final class ExcelExport
 
         // 1. Overview
         $set = Setting::all();
-        $overview = [[$set['org_name'] ?? 'Income & Expenditure']];
+        $overview = [[$set['org_name'] ?? 'Organisation']];
         if (!empty($set['tax_id']))     { $overview[] = ['Tax ID', $set['tax_id']]; }
         if (!empty($set['ngo_number'])) { $overview[] = ['Reg. No', $set['ngo_number']]; }
+        $overview[] = ['Income & Expenditure Statement'];
         $overview[] = ['Period', ($filters['date_from'] ?? 'all') . ' to ' . ($filters['date_to'] ?? 'all')];
         $overview[] = [];
         $overview[] = ['Total income (TZS)', $incTotal];
