@@ -13,28 +13,26 @@ $presets = ['#C0175B','#0E7C7B','#2456B0','#C77A0A','#2E7D4F'];
     <div class="form-field"><label>Tax ID</label><input name="tax_id" value="<?= e($s['tax_id'] ?? '') ?>"></div>
     <div class="form-field"><label>NGO registration no.</label><input name="ngo_number" value="<?= e($s['ngo_number'] ?? '') ?>"></div>
   </div>
-  <div class="form-grid">
-    <div class="form-field"><label>Base currency</label>
-      <select name="base_currency">
-        <?php foreach (['TZS'=>'TZS — Tanzanian Shilling','KES'=>'KES — Kenyan Shilling','UGX'=>'UGX — Ugandan Shilling','USD'=>'USD — US Dollar','EUR'=>'EUR — Euro'] as $code=>$label): ?>
-          <option value="<?= $code ?>" <?= (($s['base_currency'] ?? 'TZS') === $code) ? 'selected' : '' ?>><?= $label ?></option>
-        <?php endforeach; ?>
-      </select>
+  <div class="form-field"><label>Base currency</label>
+    <select name="base_currency">
+      <?php foreach (['TZS'=>'TZS — Tanzanian Shilling','KES'=>'KES — Kenyan Shilling','UGX'=>'UGX — Ugandan Shilling','USD'=>'USD — US Dollar','EUR'=>'EUR — Euro'] as $code=>$label): ?>
+        <option value="<?= $code ?>" <?= (($s['base_currency'] ?? 'TZS') === $code) ? 'selected' : '' ?>><?= $label ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+  <div class="form-field"><label>Accent colour</label>
+    <div class="accent-picker">
+      <input type="color" name="accent_color" id="accentInput" value="<?= e($accent) ?>" style="width:44px;height:38px;padding:3px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer">
+      <span class="accent-hex" id="accentHex"><?= e($accent) ?></span>
+      <?php foreach ($presets as $sw): ?>
+        <button type="button" class="sw" style="background:<?= $sw ?>" data-accent="<?= $sw ?>" aria-label="<?= $sw ?>" <?= strcasecmp($sw, $accent) === 0 ? 'aria-pressed="true"' : '' ?>></button>
+      <?php endforeach; ?>
     </div>
-    <div class="form-field"><label>Accent colour</label>
-      <div class="accent-picker">
-        <input type="color" name="accent_color" id="accentInput" value="<?= e($accent) ?>" style="width:44px;height:38px;padding:3px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer">
-        <span class="accent-hex" id="accentHex"><?= e($accent) ?></span>
-        <?php foreach ($presets as $sw): ?>
-          <button type="button" class="sw" style="background:<?= $sw ?>" data-accent="<?= $sw ?>" aria-label="<?= $sw ?>" <?= strcasecmp($sw, $accent) === 0 ? 'aria-pressed="true"' : '' ?>></button>
-        <?php endforeach; ?>
-      </div>
-      <div class="form-hint">Drives the highlight colour across the whole app.</div>
-    </div>
+    <div class="form-hint">Drives the highlight colour across the whole app.</div>
   </div>
   <div class="form-field"><label>Logo (PNG / JPG / SVG)</label>
     <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg">
-    <div class="form-hint">Recommended: a wide logo, about <strong>480×180&nbsp;px</strong> (transparent PNG or SVG). Fills the sidebar; falls back to the organisation name, then LIPA.</div>
+    <div class="form-hint">Recommended: a <strong>square</strong> logo, about <strong>240×240&nbsp;px</strong> (transparent PNG or SVG). Shown in the sidebar badge next to the organisation name; falls back to the name's initial, then LIPA.</div>
     <?php if (!empty($s['logo'])): ?><p style="margin-top:10px">Current: <img src="/uploads/<?= e($s['logo']) ?>" alt="logo" style="max-width:220px;vertical-align:middle;border:1px solid var(--line);border-radius:8px;padding:6px;background:var(--surface-2)"></p><?php endif; ?>
   </div>
   <div class="form-actions">

@@ -104,8 +104,7 @@ $svg = static function (string $p): string {
           <h1 class="page-title"><?= e($title ?? 'Dashboard') ?></h1>
         </div>
         <div class="topbar-right">
-          <span class="user-chip">
-            <span class="avatar"><?= e(strtoupper(substr($user['name'], 0, 1))) ?></span>
+          <span class="user-chip" style="padding-left:12px">
             <span class="uname"><?= e($user['name']) ?></span>
             <span class="role"><?= e(\App\role_label($user['role'])) ?></span>
           </span>
