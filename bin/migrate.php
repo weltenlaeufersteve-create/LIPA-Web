@@ -99,4 +99,9 @@ if (!columnExists($pdo, 'expenses', 'activity_id')) {
     echo "expenses.activity_id added\n";
 } else { echo "expenses.activity_id exists\n"; }
 
+// Per-NGO accent colour (design). Insert default once; never overwrite a chosen value.
+$pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('accent_color', :v)
+    ON DUPLICATE KEY UPDATE setting_key = setting_key")->execute([':v' => '#C0175B']);
+echo "accent_color setting ok\n";
+
 echo "migration complete\n";
