@@ -4,46 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Project Statement — <?= e($d['project']['name']) ?></title>
-<style>
-  body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:0;padding:32px;max-width:900px;}
-  h1{font-size:1.4rem;margin:0 0 2px;} h2{font-size:1.1rem;margin:20px 0 4px;} h3{font-size:1rem;margin:18px 0 4px;}
-  .muted{color:#555;font-size:.9rem;}
-  table{width:100%;border-collapse:collapse;margin:8px 0;}
-  th,td{border-bottom:1px solid #ddd;padding:6px 8px;text-align:left;font-size:.88rem;}
-  th{background:#f0f0f0;}
-  .num{text-align:right;}
-  .summary{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0;}
-  .summary div{border:1px solid #ddd;border-radius:8px;padding:10px 14px;min-width:150px;font-size:.85rem;}
-  .summary strong{display:block;font-size:1.15rem;margin-top:2px;}
-  .actions{margin:0 0 18px;}
-  .btn{padding:8px 14px;border:1px solid #ccc;border-radius:6px;background:#f5f5f5;cursor:pointer;text-decoration:none;color:#111;font-size:.9rem;}
-  @page { margin: 14mm; }
-  @media print {
-    .actions { display: none; }
-    body { padding: 0; max-width: none; }
-    thead { display: table-header-group; }            /* repeat column headers on each page */
-    tr { break-inside: avoid; page-break-inside: avoid; }
-    h2, h3 { break-after: avoid; page-break-after: avoid; }
-    .summary { break-inside: avoid; page-break-inside: avoid; }
-  }
-</style>
+<link rel="stylesheet" href="<?= asset('/assets/css/theme.css') ?>">
+<link rel="stylesheet" href="<?= asset('/assets/css/print.css') ?>">
+<style>:root{--accent: <?= e(\App\hex_color($s['accent_color'] ?? null)) ?>;}</style>
 </head>
 <body>
 <div class="actions">
   <button class="btn" onclick="window.print()">Print / Save as PDF</button>
-  <a class="btn" href="/reports">Back</a>
+  <a class="btn ghost" href="/reports">Back</a>
 </div>
 
-<h1><?= e($s['org_name'] ?? 'Organisation') ?></h1>
-<?php if (!empty($s['org_address'])): ?><div class="muted"><?= nl2br(e($s['org_address'])) ?></div><?php endif; ?>
-<?php if (!empty($s['org_email'])): ?><div class="muted"><?= e($s['org_email']) ?></div><?php endif; ?>
-<?php if (!empty($s['tax_id']) || !empty($s['ngo_number'])): ?>
-  <div class="muted">
-    <?php if (!empty($s['tax_id'])): ?>Tax ID: <?= e($s['tax_id']) ?><?php endif; ?>
-    <?php if (!empty($s['tax_id']) && !empty($s['ngo_number'])): ?> &middot; <?php endif; ?>
-    <?php if (!empty($s['ngo_number'])): ?>Reg. No: <?= e($s['ngo_number']) ?><?php endif; ?>
-  </div>
-<?php endif; ?>
+<div class="doc-head">
+  <h1><?= e($s['org_name'] ?? 'Organisation') ?></h1>
+  <?php if (!empty($s['org_address'])): ?><div class="muted"><?= nl2br(e($s['org_address'])) ?></div><?php endif; ?>
+  <?php if (!empty($s['org_email'])): ?><div class="muted"><?= e($s['org_email']) ?></div><?php endif; ?>
+  <?php if (!empty($s['tax_id']) || !empty($s['ngo_number'])): ?>
+    <div class="muted">
+      <?php if (!empty($s['tax_id'])): ?>Tax ID: <?= e($s['tax_id']) ?><?php endif; ?>
+      <?php if (!empty($s['tax_id']) && !empty($s['ngo_number'])): ?> &middot; <?php endif; ?>
+      <?php if (!empty($s['ngo_number'])): ?>Reg. No: <?= e($s['ngo_number']) ?><?php endif; ?>
+    </div>
+  <?php endif; ?>
+</div>
 
 <h2>Project Statement</h2>
 <p><strong><?= e($d['project']['name']) ?></strong><br>
@@ -53,7 +35,7 @@
   <div>Opening balance<strong><?= number_format($d['opening'], 2) ?></strong></div>
   <div>Funds received<strong><?= number_format($d['received'], 2) ?></strong></div>
   <div>Expenditure<strong><?= number_format($d['spent'], 2) ?></strong></div>
-  <div>Closing balance<strong><?= number_format($d['closing'], 2) ?></strong></div>
+  <div class="hero">Closing balance<strong><?= number_format($d['closing'], 2) ?></strong></div>
 </div>
 
 <h3>Funds received</h3>
