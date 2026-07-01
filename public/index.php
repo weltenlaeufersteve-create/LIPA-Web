@@ -9,6 +9,7 @@ use App\Router;
 use App\NotFoundException;
 use App\ForbiddenException;
 use App\Auth;
+use App\Csrf;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\UserController;
@@ -129,6 +130,7 @@ $router->add('POST', '/transfers/:id',        fn($p) => (new TransferController(
 $router->add('POST', '/transfers/:id/delete', fn($p) => (new TransferController())->delete((int)$p['id']));
 
 try {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') { Csrf::check(); }
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 } catch (ForbiddenException $ex) {
     if (!Auth::check()) { header('Location: /login'); exit; }

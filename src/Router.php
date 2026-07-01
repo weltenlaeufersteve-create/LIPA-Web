@@ -1,8 +1,6 @@
 <?php
 namespace App;
 
-class NotFoundException extends \RuntimeException {}
-
 final class Router
 {
     /** @var array<int, array{method:string, regex:string, keys:array<int,string>, handler:callable}> */

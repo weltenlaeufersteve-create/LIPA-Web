@@ -14,6 +14,12 @@ if (!function_exists('asset')) {
     }
 }
 
+if (!function_exists('csrf_field')) {
+    // Hidden CSRF token for a form. Note: render() also injects one into every
+    // POST form automatically, so views rarely need to call this directly.
+    function csrf_field(): string { return App\Csrf::field(); }
+}
+
 if (!function_exists('render')) {
     function render(string $view, array $data = [], ?string $title = null): string {
         extract($data);
@@ -23,6 +29,8 @@ if (!function_exists('render')) {
         $content = ob_get_clean();
         ob_start();
         include dirname(__DIR__) . '/views/_shell.php';
-        return ob_get_clean();
+        // Inject a CSRF token into every rendered POST <form> (matches the
+        // central Csrf::check() in the front controller).
+        return App\Csrf::inject(ob_get_clean());
     }
 }

@@ -4,8 +4,6 @@ namespace App;
 use App\Models\User;
 use App\Models\Activity;
 
-class ForbiddenException extends \RuntimeException {}
-
 final class Auth
 {
     public static function attempt(string $email, string $password): bool
