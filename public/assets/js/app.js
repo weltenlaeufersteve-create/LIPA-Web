@@ -70,6 +70,24 @@ document.addEventListener('click', function (e) {
   rows.forEach(function (r) { tbody.appendChild(r); });
 });
 
+// Accent-colour picker (Settings): live-preview + preset swatches.
+document.addEventListener('input', function (e) {
+  if (e.target && e.target.id === 'accentInput') {
+    document.documentElement.style.setProperty('--accent', e.target.value);
+    var hex = document.getElementById('accentHex');
+    if (hex) hex.textContent = e.target.value;
+    document.querySelectorAll('.accent-picker .sw').forEach(function (s) {
+      s.setAttribute('aria-pressed', s.dataset.accent && s.dataset.accent.toLowerCase() === e.target.value.toLowerCase() ? 'true' : 'false');
+    });
+  }
+});
+document.addEventListener('click', function (e) {
+  var sw = e.target.closest('.accent-picker .sw');
+  if (!sw || !sw.dataset.accent) return;
+  var input = document.getElementById('accentInput');
+  if (input) { input.value = sw.dataset.accent; input.dispatchEvent(new Event('input', { bubbles: true })); }
+});
+
 // Confirm dialogs for any form with data-confirm="message"
 document.addEventListener('submit', (e) => {
   const msg = e.target.getAttribute('data-confirm');

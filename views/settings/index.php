@@ -1,22 +1,43 @@
-<?php $activeTab = 'organisation'; include dirname(__DIR__) . '/admin/_tabs.php'; ?>
-<h1>Organisation</h1>
-<?php if (!empty($saved)): ?><div class="alert" style="background:var(--accent-subtle);padding:10px 12px;border-radius:8px;margin:12px 0">Settings saved.</div><?php endif; ?>
-<form method="post" enctype="multipart/form-data" action="/settings">
-  <label>Organisation name <input name="org_name" value="<?= e($s['org_name'] ?? '') ?>"></label>
-  <label>Address <textarea name="org_address"><?= e($s['org_address'] ?? '') ?></textarea></label>
-  <label>Email <input type="email" name="org_email" value="<?= e($s['org_email'] ?? '') ?>"></label>
-  <label>Tax ID <input name="tax_id" value="<?= e($s['tax_id'] ?? '') ?>"></label>
-  <label>NGO registration no. <input name="ngo_number" value="<?= e($s['ngo_number'] ?? '') ?>"></label>
-  <label>Base currency
-    <select name="base_currency">
-      <?php foreach (['TZS','USD','EUR'] as $cur): ?>
-        <option value="<?= $cur ?>" <?= (($s['base_currency'] ?? 'TZS') === $cur) ? 'selected' : '' ?>><?= $cur ?></option>
-      <?php endforeach; ?>
-    </select>
-  </label>
-  <label>Logo (PNG/JPG/SVG) <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg">
-    <small>Recommended: a wide logo, about <strong>480×180&nbsp;px</strong> (PNG with transparent background or SVG). It fills the sidebar width.</small>
-  </label>
-  <?php if (!empty($s['logo'])): ?><p>Current logo: <img src="/uploads/<?= e($s['logo']) ?>" alt="logo" style="max-width:220px;vertical-align:middle"></p><?php endif; ?>
-  <button type="submit" class="btn btn-primary">Save settings</button>
+<?php
+$activeTab = 'organisation';
+include dirname(__DIR__) . '/admin/_tabs.php';
+$accent = \App\hex_color($s['accent_color'] ?? null);
+$presets = ['#C0175B','#0E7C7B','#2456B0','#C77A0A','#2E7D4F'];
+?>
+<?php if (!empty($saved)): ?><div class="alert" style="background:var(--accent-soft);color:var(--accent);padding:10px 13px;border-radius:var(--radius-sm);margin:0 0 16px;font-weight:600">Settings saved.</div><?php endif; ?>
+<form class="form-card" method="post" enctype="multipart/form-data" action="/settings">
+  <div class="form-field"><label>Organisation name</label><input name="org_name" value="<?= e($s['org_name'] ?? '') ?>"></div>
+  <div class="form-field"><label>Address</label><textarea name="org_address"><?= e($s['org_address'] ?? '') ?></textarea></div>
+  <div class="form-field"><label>Email</label><input type="email" name="org_email" value="<?= e($s['org_email'] ?? '') ?>"></div>
+  <div class="form-grid">
+    <div class="form-field"><label>Tax ID</label><input name="tax_id" value="<?= e($s['tax_id'] ?? '') ?>"></div>
+    <div class="form-field"><label>NGO registration no.</label><input name="ngo_number" value="<?= e($s['ngo_number'] ?? '') ?>"></div>
+  </div>
+  <div class="form-grid">
+    <div class="form-field"><label>Base currency</label>
+      <select name="base_currency">
+        <?php foreach (['TZS'=>'TZS — Tanzanian Shilling','KES'=>'KES — Kenyan Shilling','UGX'=>'UGX — Ugandan Shilling','USD'=>'USD — US Dollar','EUR'=>'EUR — Euro'] as $code=>$label): ?>
+          <option value="<?= $code ?>" <?= (($s['base_currency'] ?? 'TZS') === $code) ? 'selected' : '' ?>><?= $label ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-field"><label>Accent colour</label>
+      <div class="accent-picker">
+        <input type="color" name="accent_color" id="accentInput" value="<?= e($accent) ?>" style="width:44px;height:38px;padding:3px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer">
+        <span class="accent-hex" id="accentHex"><?= e($accent) ?></span>
+        <?php foreach ($presets as $sw): ?>
+          <button type="button" class="sw" style="background:<?= $sw ?>" data-accent="<?= $sw ?>" aria-label="<?= $sw ?>" <?= strcasecmp($sw, $accent) === 0 ? 'aria-pressed="true"' : '' ?>></button>
+        <?php endforeach; ?>
+      </div>
+      <div class="form-hint">Drives the highlight colour across the whole app.</div>
+    </div>
+  </div>
+  <div class="form-field"><label>Logo (PNG / JPG / SVG)</label>
+    <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg">
+    <div class="form-hint">Recommended: a wide logo, about <strong>480×180&nbsp;px</strong> (transparent PNG or SVG). Fills the sidebar; falls back to the organisation name, then LIPA.</div>
+    <?php if (!empty($s['logo'])): ?><p style="margin-top:10px">Current: <img src="/uploads/<?= e($s['logo']) ?>" alt="logo" style="max-width:220px;vertical-align:middle;border:1px solid var(--line);border-radius:8px;padding:6px;background:var(--surface-2)"></p><?php endif; ?>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn">Save settings</button>
+  </div>
 </form>
