@@ -238,6 +238,22 @@ a{ color:var(--accent); }
 .login-card input,.login-wrap input{ width:100%; padding:10px 13px; border-radius:var(--radius-sm);
   border:1px solid var(--line); background:var(--surface-2); color:var(--ink); font:inherit; }
 
+/* Modal (help popup; reusable) */
+.modal[hidden]{ display:none; }
+.modal{ position:fixed; inset:0; z-index:200; display:grid; place-items:center; padding:20px; }
+.modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.45); }
+.modal-card{ position:relative; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); width:100%; max-width:560px; max-height:85vh; display:flex; flex-direction:column; overflow:hidden; }
+.modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); }
+.modal-head h2{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; letter-spacing:-.01em; margin:0; }
+.modal-body{ padding:8px 20px 20px; overflow:auto; }
+.help-intro{ color:var(--muted); font-size:13px; margin:12px 0 6px; }
+.help-recipe{ padding:12px 0; border-bottom:1px solid var(--line-soft); }
+.help-recipe:last-child{ border-bottom:none; }
+.help-recipe b{ display:block; font-size:14px; margin-bottom:3px; }
+.help-recipe span{ font-size:13px; color:var(--muted); line-height:1.5; }
+.help-recipe .path{ color:var(--accent); font-weight:600; }
+
 /* Mobile drawer + scrim (toggled via .app-shell.nav-open by app.js) */
 .hamburger{ display:none; }
 .scrim{ position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:40; display:none; }

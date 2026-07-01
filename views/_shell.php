@@ -98,7 +98,7 @@ $svg = static function (string $p): string {
       </nav>
 
       <div class="sidebar-foot">
-        <div class="powered">Powered by <b>LIPA</b><br>Income &amp; Expenses for small NGOs</div>
+        <div class="powered">Powered by <b>LIPA</b> <span style="opacity:.75">v<?= \App\VERSION ?></span><br>Income &amp; Expenses for small NGOs</div>
       </div>
     </aside>
     <div class="scrim"></div>
@@ -114,12 +114,14 @@ $svg = static function (string $p): string {
             <span class="uname"><?= e($user['name']) ?></span>
             <span class="role"><?= e(\App\role_label($user['role'])) ?></span>
           </span>
-          <form method="post" action="/logout" style="margin:0"><button type="submit" class="btn ghost">Log out</button></form>
+          <form method="post" action="/logout" style="margin:0"><button type="submit" class="btn ghost" style="gap:7px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></form>
+          <button type="button" id="help-toggle" class="icon-btn" aria-label="Help" title="How to use LIPA" aria-haspopup="dialog" style="font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1">?</button>
           <button type="button" id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
         </div>
       </header>
       <main class="content"><?= $content ?></main>
     </div>
+    <?php include __DIR__ . '/_help.php'; ?>
   </div>
 <?php else: ?>
   <?= $content ?>

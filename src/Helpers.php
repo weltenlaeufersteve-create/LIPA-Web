@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+const VERSION = '1.0.0';
+
 if (!function_exists('App\\hex_color')) {
     /** Return $v if it is a #rrggbb hex colour, else the fallback (guards against injection/bad input). */
     function hex_color(?string $v, string $fallback = '#C0175B'): string
