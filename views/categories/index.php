@@ -1,6 +1,10 @@
 <?php $activeTab = 'categories'; include dirname(__DIR__) . '/admin/_tabs.php'; ?>
 <div class="row-between" style="margin-bottom:16px">
-  <span class="count"><?= count($categories) ?> categor<?= count($categories) === 1 ? 'y' : 'ies' ?></span>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a class="btn <?= $type === null ? '' : 'ghost' ?>" href="/categories">All</a>
+    <a class="btn <?= $type === 'income' ? '' : 'ghost' ?>" href="/categories?type=income">Income</a>
+    <a class="btn <?= $type === 'expense' ? '' : 'ghost' ?>" href="/categories?type=expense">Expense</a>
+  </div>
   <a class="btn list-new" href="/categories/new">+ New category</a>
 </div>
 <div class="card table-card">

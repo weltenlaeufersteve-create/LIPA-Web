@@ -1,8 +1,8 @@
 <div class="row-between" style="margin-bottom:16px">
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <a class="btn ghost" href="/contacts">All</a>
-    <a class="btn ghost" href="/contacts?type=donor">Donors</a>
-    <a class="btn ghost" href="/contacts?type=vendor">Vendors</a>
+    <a class="btn <?= $type === null ? '' : 'ghost' ?>" href="/contacts">All</a>
+    <a class="btn <?= $type === 'donor' ? '' : 'ghost' ?>" href="/contacts?type=donor">Donors</a>
+    <a class="btn <?= $type === 'vendor' ? '' : 'ghost' ?>" href="/contacts?type=vendor">Vendors</a>
   </div>
   <?php if (App\Auth::is('admin','editor')): ?>
     <a class="btn list-new" href="/contacts/new">+ New contact</a>

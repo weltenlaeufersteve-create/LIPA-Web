@@ -10,7 +10,9 @@ final class CategoryController
     public function index(): string
     {
         Auth::requireRole('admin');
-        return render('categories/index', ['categories'=>Category::all()], 'Categories');
+        $type = $_GET['type'] ?? null;
+        if (!in_array($type, ['income','expense'], true)) { $type = null; }
+        return render('categories/index', ['categories'=>Category::all($type), 'type'=>$type], 'Categories');
     }
 
     public function create(): string
