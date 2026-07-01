@@ -88,6 +88,29 @@ document.addEventListener('click', function (e) {
   if (input) { input.value = sw.dataset.accent; input.dispatchEvent(new Event('input', { bubbles: true })); }
 });
 
+// Activity expense picker: type-to-filter visible rows + row highlight on tick.
+(function () {
+  var s = document.getElementById('expSearch');
+  if (s) {
+    s.addEventListener('input', function () {
+      var q = s.value.trim().toLowerCase(), any = false;
+      document.querySelectorAll('#expPicker tbody tr').forEach(function (tr) {
+        var hit = (tr.dataset.text || '').indexOf(q) !== -1;
+        tr.style.display = hit ? '' : 'none';
+        if (hit) any = true;
+      });
+      var nr = document.getElementById('expNoResults');
+      if (nr) nr.style.display = any ? 'none' : 'block';
+    });
+  }
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('check')) {
+      var tr = e.target.closest('tr');
+      if (tr) tr.classList.toggle('checked', e.target.checked);
+    }
+  });
+})();
+
 // Confirm dialogs for any form with data-confirm="message"
 document.addEventListener('submit', (e) => {
   const msg = e.target.getAttribute('data-confirm');
