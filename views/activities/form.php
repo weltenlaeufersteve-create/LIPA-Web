@@ -16,10 +16,10 @@
 
   <h3>Photos (max 5, JPG/PNG)</h3>
   <?php if (!empty($photos)): ?>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+    <div class="photo-grid">
       <?php foreach ($photos as $ph): ?>
-        <div style="text-align:center">
-          <img src="/activities/<?= (int)$a['id'] ?>/photo/<?= (int)$ph['id'] ?>" alt="" style="max-height:90px;border-radius:6px;border:1px solid var(--border)">
+        <div class="photo-thumb">
+          <img src="/activities/<?= (int)$a['id'] ?>/photo/<?= (int)$ph['id'] ?>" alt="">
           <div><button type="submit" formaction="/activities/<?= (int)$a['id'] ?>/photo/<?= (int)$ph['id'] ?>/delete" formmethod="post" class="btn-link-danger" data-confirm="Delete this photo?">Delete</button></div>
         </div>
       <?php endforeach; ?>
@@ -30,7 +30,7 @@
 
   <h3>Linked expenses</h3>
   <p><small>Tick the expenses that belong to this activity (unassigned expenses + ones already on it).</small></p>
-  <div class="table-wrap" style="max-height:260px;overflow:auto">
+  <div class="table-wrap picker-scroll">
   <table class="data-table">
     <thead><tr><th></th><th>Date</th><th>Category</th><th>Description</th><th>Amount (TZS)</th></tr></thead>
     <tbody>
@@ -48,7 +48,7 @@
   </table>
   </div>
 
-  <p style="margin-top:14px">
+  <p class="form-actions">
     <button type="submit" class="btn btn-primary">Save</button>
     <a href="/activities" class="btn">Cancel</a>
   </p>
