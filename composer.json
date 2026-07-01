@@ -2,6 +2,7 @@
     "name": "pepea/lipa-web",
     "description": "NGO income/expense tracker (QuickBooks replacement)",
     "type": "project",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": ">=8.3",
         "phpoffice/phpspreadsheet": "^5.8",

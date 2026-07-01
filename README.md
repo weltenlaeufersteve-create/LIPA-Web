@@ -56,6 +56,14 @@ vanilla CSS/JS. Composer deps: `phpoffice/phpspreadsheet` (Excel), `vlucas/phpdo
 - **editor** — record income, expenses, contacts, projects, transfers, activities.
 - **viewer** (accountant) — read everything and export/print; no edits.
 
+## License
+Copyright © 2026 Stephan Auner.
+
+Licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)** —
+see [LICENSE](LICENSE). In short: you may use, study, share, and modify this software, but if
+you distribute it **or run a modified version as a network service**, you must make your source
+code available under the same license.
+
 ## Changelog
 Newest first.
 
