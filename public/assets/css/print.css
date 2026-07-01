@@ -1,0 +1,45 @@
+/* Shared styles for the printable statements/reports.
+   Uses the app's design tokens + fonts (theme.css), but optimised for print:
+   always light, white paper, ink-frugal. The org accent tints headers + rules. */
+
+body{ font-family:var(--font-body); color:var(--ink); background:#fff; margin:0; padding:32px; max-width:900px; }
+
+.doc-head{ border-bottom:2px solid var(--accent); padding-bottom:12px; margin-bottom:18px; }
+h1{ font-family:var(--font-display); font-weight:800; font-size:1.5rem; letter-spacing:-.02em; margin:0 0 2px; color:var(--ink); }
+h2{ font-family:var(--font-display); font-weight:700; font-size:1.15rem; letter-spacing:-.01em; margin:22px 0 6px; color:var(--accent); }
+h3{ font-family:var(--font-display); font-weight:700; font-size:1rem; margin:18px 0 4px; color:var(--ink); }
+.muted{ color:var(--muted); font-size:.9rem; }
+
+table{ width:100%; border-collapse:collapse; margin:8px 0; }
+th,td{ border-bottom:1px solid var(--line); padding:7px 10px; text-align:left; font-size:.86rem; }
+thead th{ background:var(--surface-2); color:var(--faint); text-transform:uppercase; font-size:11px; letter-spacing:.05em; font-weight:600; }
+.num,.r{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.pos{ color:var(--pos); } .neg{ color:var(--neg); }
+.total-row td{ border-top:2px solid var(--ink); font-weight:700; }
+
+.summary{ display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.summary div{ border:1px solid var(--line); border-radius:12px; padding:12px 16px; min-width:150px; font-size:.82rem; color:var(--muted); background:var(--surface-2); }
+.summary strong{ display:block; font-family:var(--font-display); font-size:1.2rem; margin-top:3px; color:var(--ink); font-variant-numeric:tabular-nums; }
+.summary .hero{ border-color:var(--accent-line); background:var(--accent-quiet); }
+.summary .hero strong{ color:var(--accent); }
+
+.grand{ border-top:2px solid var(--ink); padding-top:8px; margin-top:18px; text-align:right; font-family:var(--font-display); }
+
+.actions{ margin:0 0 18px; display:flex; gap:8px; }
+.btn{ font-family:var(--font-body); font-weight:600; font-size:.9rem; padding:9px 16px; border-radius:10px; border:1px solid transparent;
+  background:var(--accent); color:var(--accent-ink); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
+.btn.ghost{ background:#fff; color:var(--muted); border-color:var(--line); }
+
+.photos{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
+.photos img{ max-height:150px; border:1px solid var(--line); border-radius:8px; }
+.activity{ border-top:2px solid var(--line); padding-top:12px; margin-top:18px; }
+
+@page{ margin:14mm; }
+@media print{
+  .actions{ display:none; }
+  body{ padding:0; max-width:none; }
+  thead{ display:table-header-group; }        /* repeat column headers on each page */
+  tr{ break-inside:avoid; page-break-inside:avoid; }
+  h2,h3{ break-after:avoid; page-break-after:avoid; }
+  .summary,.activity{ break-inside:avoid; page-break-inside:avoid; }
+}

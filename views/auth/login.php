@@ -11,7 +11,7 @@
   <form method="post" action="/login" style="text-align:left">
     <label>Email <input type="email" name="email" required autofocus></label>
     <label>Password <input type="password" name="password" required></label>
-    <button type="submit" class="btn btn-primary">Sign in</button>
+    <button type="submit" class="btn" style="width:100%">Sign in</button>
   </form>
   <p class="login-powered">Powered by <strong>LIPA</strong> — Income &amp; Expenses for small NGOs</p>
 </div>

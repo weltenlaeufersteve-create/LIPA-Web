@@ -21,6 +21,9 @@ final class SettingController
         foreach (self::KEYS as $k) {
             Setting::set($k, trim($_POST[$k] ?? ''));
         }
+        if (isset($_POST['accent_color'])) {
+            Setting::set('accent_color', \App\hex_color($_POST['accent_color']));
+        }
         if (!empty($_FILES['logo']['name']) && ($_FILES['logo']['error'] ?? 1) === UPLOAD_ERR_OK) {
             $ext = strtolower(pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION));
             if (in_array($ext, ['png','jpg','jpeg','svg'], true)) {
