@@ -111,6 +111,19 @@ document.addEventListener('click', function (e) {
   });
 })();
 
+// Help popup: open via the "?" button, close via ✕, backdrop, or Esc.
+document.addEventListener('click', function (e) {
+  var m = document.getElementById('help-modal');
+  if (!m) return;
+  if (e.target.closest('#help-toggle')) { m.hidden = false; }
+  else if (e.target.closest('[data-help-close]')) { m.hidden = true; }
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  var m = document.getElementById('help-modal');
+  if (m && !m.hidden) { m.hidden = true; }
+});
+
 // Confirm dialogs for any form with data-confirm="message"
 document.addEventListener('submit', (e) => {
   const msg = e.target.getAttribute('data-confirm');
