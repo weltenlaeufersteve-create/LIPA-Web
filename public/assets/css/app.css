@@ -110,6 +110,8 @@ a{ color:var(--accent); }
   background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:8px 16px; }
 .total-chip b{ font-family:var(--font-display); font-size:17px; color:var(--ink); font-variant-numeric:tabular-nums; }
 .table-card{ overflow:hidden; }
+/* Wide multi-column money tables scroll horizontally instead of clipping on small screens. */
+.table-scroll{ overflow-x:auto; }
 .ledger{ width:100%; border-collapse:collapse; }
 .ledger thead th{ text-align:left; font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
   color:var(--faint); padding:12px 20px; border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap; }
@@ -252,17 +254,3 @@ a{ color:var(--accent); }
   .user-chip .uname{ display:none; }
 }
 
-/* ── Legacy compatibility (screens not yet migrated to .ledger/.form-card).
-   Retokenised so nothing looks broken mid-migration. Removed in final cleanup. ── */
-.data-table{ width:100%; border-collapse:collapse; background:var(--surface); border-radius:var(--radius); overflow:hidden; }
-.data-table th,.data-table td{ padding:12px 16px; text-align:left; border-bottom:1px solid var(--line-soft); white-space:nowrap; }
-.data-table th{ background:var(--surface-2); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); }
-.data-table th[data-sort="asc"]::after{ content:" ▲"; font-size:.7em; opacity:.7; }
-.data-table th[data-sort="desc"]::after{ content:" ▼"; font-size:.7em; opacity:.7; }
-.table-wrap{ overflow-x:auto; }
-.list-toolbar{ display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
-.list-toolbar .list-new{ margin-left:auto; white-space:nowrap; }
-.filters{ display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
-.filter-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:end; }
-label{ display:block; margin:12px 0; }
-h1{ font-family:var(--font-display); letter-spacing:-.02em; }
