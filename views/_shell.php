@@ -46,7 +46,7 @@ $svg = static function (string $p): string {
       <div class="brand">
         <div class="brand-logo">
           <?php if (!empty($settings['logo'])): ?>
-            <img src="/uploads/<?= e($settings['logo']) ?>" alt="<?= e($orgName !== '' ? $orgName : 'Logo') ?>">
+            <img src="<?= asset('/uploads/' . $settings['logo']) ?>" alt="<?= e($orgName !== '' ? $orgName : 'Logo') ?>">
           <?php else: ?>
             <?= e(strtoupper(substr($orgName !== '' ? $orgName : 'L', 0, 1))) ?>
           <?php endif; ?>

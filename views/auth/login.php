@@ -1,7 +1,7 @@
 <?php $org = \App\Models\Setting::all(); $orgName = $org['org_name'] ?? ''; ?>
 <div class="login-wrap" style="max-width:360px;margin:10vh auto;text-align:center">
   <?php if (!empty($org['logo'])): ?>
-    <img src="/uploads/<?= e($org['logo']) ?>" alt="<?= e($orgName !== '' ? $orgName : 'Logo') ?>" class="login-logo">
+    <img src="<?= asset('/uploads/' . $org['logo']) ?>" alt="<?= e($orgName !== '' ? $orgName : 'Logo') ?>" class="login-logo">
   <?php else: ?>
     <h1 class="login-org"><?= e($orgName !== '' ? $orgName : 'LIPA') ?></h1>
   <?php endif; ?>

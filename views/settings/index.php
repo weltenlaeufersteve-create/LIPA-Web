@@ -33,7 +33,7 @@ $presets = ['#C0175B','#0E7C7B','#2456B0','#C77A0A','#2E7D4F'];
   <div class="form-field"><label>Logo (PNG / JPG / SVG)</label>
     <input type="file" name="logo" accept=".png,.jpg,.jpeg,.svg">
     <div class="form-hint">Recommended: a <strong>square</strong> logo, about <strong>240×240&nbsp;px</strong> (transparent PNG or SVG). Shown in the sidebar badge next to the organisation name; falls back to the name's initial, then LIPA.</div>
-    <?php if (!empty($s['logo'])): ?><p style="margin-top:10px">Current: <img src="/uploads/<?= e($s['logo']) ?>" alt="logo" style="max-width:220px;vertical-align:middle;border:1px solid var(--line);border-radius:8px;padding:6px;background:var(--surface-2)"></p><?php endif; ?>
+    <?php if (!empty($s['logo'])): ?><p style="margin-top:10px">Current: <img src="<?= asset('/uploads/' . $s['logo']) ?>" alt="logo" style="max-width:220px;vertical-align:middle;border:1px solid var(--line);border-radius:8px;padding:6px;background:var(--surface-2)"></p><?php endif; ?>
   </div>
   <div class="form-actions">
     <button type="submit" class="btn">Save settings</button>
