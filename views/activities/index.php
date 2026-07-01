@@ -1,7 +1,8 @@
-<div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
-  <h1>Activities</h1>
+<h1>Activities</h1>
+<div class="list-toolbar">
+  <span></span>
   <?php if (App\Auth::is('admin','editor')): ?>
-    <a class="btn btn-primary" href="/activities/new">New activity</a>
+    <a class="btn btn-primary list-new" href="/activities/new">New activity</a>
   <?php endif; ?>
 </div>
 <div class="table-wrap">

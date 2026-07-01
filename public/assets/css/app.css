@@ -100,6 +100,14 @@ input, select, textarea { width: 100%; padding: 10px 12px; min-height: 44px;
 .data-table th[data-sort="asc"]::after  { content: " ▲"; font-size: .7em; opacity: .7; }
 .data-table th[data-sort="desc"]::after { content: " ▼"; font-size: .7em; opacity: .7; }
 
+/* Activities: photo thumbnails + scrollable expense picker */
+.photo-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.photo-thumb { text-align: center; }
+.photo-thumb img { max-height: 90px; border-radius: var(--radius-md, 6px);
+                   border: 1px solid var(--border, rgba(0,0,0,.12)); }
+.picker-scroll { max-height: 260px; overflow: auto; }
+.form-actions { margin-top: 14px; }
+
 .alert-error { padding: 10px 12px; border-radius: var(--radius-md, 8px);
                background: var(--status-overdue-bg, rgba(239,68,68,.12));
                color: var(--status-overdue, #dc2626); margin: 12px 0; }
