@@ -1,22 +1,27 @@
 <?php $isNew = empty($c['id']); ?>
-<h1><?= $isNew ? 'New contact' : 'Edit contact' ?></h1>
 <?php if (!empty($error)): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
-<form method="post" action="<?= $isNew ? '/contacts' : '/contacts/' . (int)$c['id'] ?>">
-  <label>Type
-    <select name="type">
-      <?php foreach (['donor','vendor'] as $t): ?>
-        <option value="<?= $t ?>" <?= (($c['type'] ?? 'donor') === $t) ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
-      <?php endforeach; ?>
-    </select>
-  </label>
-  <label>Name <input name="name" value="<?= e($c['name'] ?? '') ?>" required></label>
-  <label>Email <input type="email" name="email" value="<?= e($c['email'] ?? '') ?>"></label>
-  <label>Phone <input name="phone" value="<?= e($c['phone'] ?? '') ?>"></label>
-  <label>Address <textarea name="address"><?= e($c['address'] ?? '') ?></textarea></label>
-  <label>Notes <textarea name="notes"><?= e($c['notes'] ?? '') ?></textarea></label>
+<form class="form-card" method="post" action="<?= $isNew ? '/contacts' : '/contacts/' . (int)$c['id'] ?>">
+  <div class="form-grid">
+    <div class="form-field"><label>Type</label>
+      <select name="type">
+        <?php foreach (['donor','vendor'] as $t): ?>
+          <option value="<?= $t ?>" <?= (($c['type'] ?? 'donor') === $t) ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-field"><label>Name</label><input name="name" value="<?= e($c['name'] ?? '') ?>" required></div>
+  </div>
+  <div class="form-grid">
+    <div class="form-field"><label>Email</label><input type="email" name="email" value="<?= e($c['email'] ?? '') ?>"></div>
+    <div class="form-field"><label>Phone</label><input name="phone" value="<?= e($c['phone'] ?? '') ?>"></div>
+  </div>
+  <div class="form-field"><label>Address</label><textarea name="address"><?= e($c['address'] ?? '') ?></textarea></div>
+  <div class="form-field"><label>Notes</label><textarea name="notes"><?= e($c['notes'] ?? '') ?></textarea></div>
   <?php if (!$isNew): ?>
-    <label><input type="checkbox" name="active" value="1" <?= ((int)($c['active'] ?? 1) === 1) ? 'checked' : '' ?>> Active</label>
+    <div class="form-field"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="active" value="1" <?= ((int)($c['active'] ?? 1) === 1) ? 'checked' : '' ?> style="width:auto"> Active</label></div>
   <?php endif; ?>
-  <button type="submit" class="btn btn-primary">Save</button>
-  <a href="/contacts" class="btn">Cancel</a>
+  <div class="form-actions">
+    <button type="submit" class="btn">Save</button>
+    <a href="/contacts" class="btn ghost">Cancel</a>
+  </div>
 </form>

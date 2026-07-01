@@ -1,19 +1,22 @@
 <?php $isNew = empty($cat['id']); ?>
-<h1><?= $isNew ? 'New category' : 'Edit category' ?></h1>
 <?php if (!empty($error)): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
-<form method="post" action="<?= $isNew ? '/categories' : '/categories/' . (int)$cat['id'] ?>">
-  <label>Type
-    <select name="type">
-      <?php foreach (['income','expense'] as $t): ?>
-        <option value="<?= $t ?>" <?= (($cat['type'] ?? 'expense') === $t) ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
-      <?php endforeach; ?>
-    </select>
-  </label>
-  <label>Name <input name="name" value="<?= e($cat['name'] ?? '') ?>" required></label>
-  <label>Sort order <input type="number" name="sort_order" value="<?= (int)($cat['sort_order'] ?? 0) ?>"></label>
+<form class="form-card" method="post" action="<?= $isNew ? '/categories' : '/categories/' . (int)$cat['id'] ?>">
+  <div class="form-grid">
+    <div class="form-field"><label>Type</label>
+      <select name="type">
+        <?php foreach (['income','expense'] as $t): ?>
+          <option value="<?= $t ?>" <?= (($cat['type'] ?? 'expense') === $t) ? 'selected' : '' ?>><?= ucfirst($t) ?></option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+    <div class="form-field"><label>Sort order</label><input type="number" name="sort_order" value="<?= (int)($cat['sort_order'] ?? 0) ?>"></div>
+  </div>
+  <div class="form-field"><label>Name</label><input name="name" value="<?= e($cat['name'] ?? '') ?>" required></div>
   <?php if (!$isNew): ?>
-    <label><input type="checkbox" name="active" value="1" <?= ((int)($cat['active'] ?? 1) === 1) ? 'checked' : '' ?>> Active</label>
+    <div class="form-field"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="active" value="1" <?= ((int)($cat['active'] ?? 1) === 1) ? 'checked' : '' ?> style="width:auto"> Active</label></div>
   <?php endif; ?>
-  <button type="submit" class="btn btn-primary">Save</button>
-  <a href="/categories" class="btn">Cancel</a>
+  <div class="form-actions">
+    <button type="submit" class="btn">Save</button>
+    <a href="/categories" class="btn ghost">Cancel</a>
+  </div>
 </form>
