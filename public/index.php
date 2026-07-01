@@ -21,6 +21,7 @@ use App\Controllers\ExpenseController;
 use App\Controllers\SettingController;
 use App\Controllers\ReportController;
 use App\Controllers\ActivityController;
+use App\Controllers\ActivitiesController;
 use App\Controllers\AccountController;
 use App\Controllers\TransferController;
 
@@ -101,14 +102,14 @@ $router->add('GET', '/reports/org-statement', fn() => (new ReportController())->
 $router->add('GET', '/reports/activity-report', fn() => (new ReportController())->activityReport());
 
 // Activities
-$router->add('GET',  '/activities',                       fn() => (new ActivityController())->index());
-$router->add('GET',  '/activities/new',                   fn() => (new ActivityController())->create());
-$router->add('POST', '/activities',                       fn() => (new ActivityController())->store());
-$router->add('GET',  '/activities/:id/edit',              fn($p) => (new ActivityController())->edit((int)$p['id']));
-$router->add('POST', '/activities/:id',                   fn($p) => (new ActivityController())->update((int)$p['id']));
-$router->add('POST', '/activities/:id/delete',            fn($p) => (new ActivityController())->delete((int)$p['id']));
-$router->add('GET',  '/activities/:id/photo/:pid',        fn($p) => (new ActivityController())->photo((int)$p['id'], (int)$p['pid']));
-$router->add('POST', '/activities/:id/photo/:pid/delete', fn($p) => (new ActivityController())->deletePhoto((int)$p['id'], (int)$p['pid']));
+$router->add('GET',  '/activities',                       fn() => (new ActivitiesController())->index());
+$router->add('GET',  '/activities/new',                   fn() => (new ActivitiesController())->create());
+$router->add('POST', '/activities',                       fn() => (new ActivitiesController())->store());
+$router->add('GET',  '/activities/:id/edit',              fn($p) => (new ActivitiesController())->edit((int)$p['id']));
+$router->add('POST', '/activities/:id',                   fn($p) => (new ActivitiesController())->update((int)$p['id']));
+$router->add('POST', '/activities/:id/delete',            fn($p) => (new ActivitiesController())->delete((int)$p['id']));
+$router->add('GET',  '/activities/:id/photo/:pid',        fn($p) => (new ActivitiesController())->photo((int)$p['id'], (int)$p['pid']));
+$router->add('POST', '/activities/:id/photo/:pid/delete', fn($p) => (new ActivitiesController())->deletePhoto((int)$p['id'], (int)$p['pid']));
 
 // Activity log (admin, viewer)
 $router->add('GET', '/activity', fn() => (new ActivityController())->index());
