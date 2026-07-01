@@ -8,8 +8,10 @@ $orgName  = $settings['org_name'] ?? '';
 $reqPath  = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $navActive = static function (string $href) use ($reqPath): string {
     if ($href === '/') { return $reqPath === '/' ? ' active' : ''; }
-    return strpos($reqPath, $href) === 0 ? ' active' : '';
+    return ($reqPath === $href || strpos($reqPath, $href . '/') === 0) ? ' active' : '';
 };
+// The Settings area spans several routes — highlight "Settings" on any of them.
+$settingsActive = preg_match('#^/(settings|accounts|categories|users)#', $reqPath) ? ' active' : '';
 // Inline SVG icons (stroke = currentColor)
 $ic = [
   'dash'      => '<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',
@@ -82,14 +84,18 @@ $svg = static function (string $p): string {
         </div>
       </nav>
 
-      <?php if (Auth::is('admin','viewer')): ?>
-        <nav class="nav" style="margin-top:14px">
-          <div class="nav-group">
-            <?php if (Auth::is('admin')): ?><a class="nav-item<?= $navActive('/settings') ?>" href="/settings"><?= $svg($ic['settings']) ?>Settings</a><?php endif; ?>
-            <?php if (Auth::is('admin','viewer')): ?><a class="nav-item<?= $navActive('/activity') ?>" href="/activity"><?= $svg($ic['log']) ?>Activity log</a><?php endif; ?>
-          </div>
-        </nav>
-      <?php endif; ?>
+      <nav class="nav" style="margin-top:14px">
+        <div class="nav-group">
+          <?php if (Auth::is('admin','editor')): ?>
+            <a class="nav-item<?= $settingsActive ?>" href="/settings"><?= $svg($ic['settings']) ?>Settings</a>
+          <?php elseif (Auth::is('viewer')): ?>
+            <a class="nav-item<?= $settingsActive ?>" href="/accounts"><?= $svg($ic['settings']) ?>Settings</a>
+          <?php endif; ?>
+          <?php if (Auth::is('admin','viewer')): ?>
+            <a class="nav-item<?= $navActive('/activity') ?>" href="/activity"><?= $svg($ic['log']) ?>Activity log</a>
+          <?php endif; ?>
+        </div>
+      </nav>
 
       <div class="sidebar-foot">
         <div class="powered">Powered by <b>LIPA</b><br>Income &amp; Expenses for small NGOs</div>

@@ -11,7 +11,7 @@ final class SettingController
 
     public function index(): string
     {
-        Auth::requireRole('admin');
+        Auth::requireRole('admin','editor'); // editor may VIEW org details; save() stays admin-only
         return render('settings/index', ['s'=>Setting::all(), 'saved'=>isset($_GET['saved'])], 'Settings');
     }
 

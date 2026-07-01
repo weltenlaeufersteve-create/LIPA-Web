@@ -9,7 +9,7 @@ final class CategoryController
 {
     public function index(): string
     {
-        Auth::requireRole('admin');
+        Auth::requireRole('admin','viewer'); // viewer may VIEW; writes stay admin-only
         $type = $_GET['type'] ?? null;
         if (!in_array($type, ['income','expense'], true)) { $type = null; }
         return render('categories/index', ['categories'=>Category::all($type), 'type'=>$type], 'Categories');

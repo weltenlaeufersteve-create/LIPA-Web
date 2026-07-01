@@ -5,7 +5,7 @@
     <a class="btn <?= $type === 'income' ? '' : 'ghost' ?>" href="/categories?type=income">Income</a>
     <a class="btn <?= $type === 'expense' ? '' : 'ghost' ?>" href="/categories?type=expense">Expense</a>
   </div>
-  <a class="btn list-new" href="/categories/new">+ New category</a>
+  <?php if (App\Auth::is('admin')): ?><a class="btn list-new" href="/categories/new">+ New category</a><?php endif; ?>
 </div>
 <div class="card table-card">
   <table class="ledger">
@@ -18,12 +18,14 @@
         <td class="r muted-cell num"><?= (int)$row['sort_order'] ?></td>
         <td><span class="badge <?= (int)$row['active'] === 1 ? 'on' : 'off' ?>"><span class="bdot"></span><?= (int)$row['active'] === 1 ? 'Active' : 'Inactive' ?></span></td>
         <td class="r">
+          <?php if (App\Auth::is('admin')): ?>
           <div class="rowact">
             <a class="edit" href="/categories/<?= (int)$row['id'] ?>/edit" aria-label="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a>
             <form method="post" action="/categories/<?= (int)$row['id'] ?>/delete" style="display:inline" data-confirm="Delete this category?">
               <button type="submit" class="del" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
             </form>
           </div>
+          <?php endif; ?>
         </td>
       </tr>
     <?php endforeach; ?>

@@ -9,7 +9,7 @@ final class AccountController
 {
     public function index(): string
     {
-        Auth::requireRole('admin');
+        Auth::requireRole('admin','viewer'); // viewer may VIEW; writes stay admin-only
         return render('accounts/index', ['accounts'=>Account::all()], 'Accounts');
     }
 
