@@ -15,6 +15,16 @@ final class HelpersTest extends TestCase
         $this->assertSame('#C0175B', \App\hex_color('#c0175b"><script>')); // injection rejected
     }
 
+    public function test_ini_bytes_parses_size_strings(): void
+    {
+        $this->assertSame(8 * 1024 * 1024, \App\ini_bytes('8M'));
+        $this->assertSame(64 * 1024 * 1024, \App\ini_bytes('64M'));
+        $this->assertSame(2 * 1024 * 1024 * 1024, \App\ini_bytes('2G'));
+        $this->assertSame(512 * 1024, \App\ini_bytes('512K'));
+        $this->assertSame(8388608, \App\ini_bytes('8388608')); // plain bytes
+        $this->assertSame(0, \App\ini_bytes(''));
+    }
+
     public function test_role_label_maps_enum_to_display(): void
     {
         $this->assertSame('Admin', \App\role_label('admin'));
