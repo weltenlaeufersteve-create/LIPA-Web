@@ -12,6 +12,9 @@ $navActive = static function (string $href) use ($reqPath): string {
 };
 // The Settings area spans several routes — highlight "Settings" on any of them.
 $settingsActive = preg_match('#^/(settings|accounts|categories|users)#', $reqPath) ? ' active' : '';
+// Mobile account chip: role initial + colour.
+$roleClass   = $user ? (['admin'=>'role-admin','editor'=>'role-coord','viewer'=>'role-acct'][$user['role']] ?? '') : '';
+$roleInitial = $user ? strtoupper(substr(\App\role_label($user['role']), 0, 1)) : '';
 // Inline SVG icons (stroke = currentColor)
 $ic = [
   'dash'      => '<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',
@@ -110,11 +113,20 @@ $svg = static function (string $p): string {
           <h1 class="page-title"><?= e($title ?? 'Dashboard') ?></h1>
         </div>
         <div class="topbar-right">
-          <span class="user-chip" style="padding-left:12px">
+          <span class="user-chip acct-desktop" style="padding-left:12px">
             <span class="uname"><?= e($user['name']) ?></span>
             <span class="role"><?= e(\App\role_label($user['role'])) ?></span>
           </span>
-          <form method="post" action="/logout" style="margin:0"><button type="submit" class="btn ghost" style="gap:7px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></form>
+          <form method="post" action="/logout" class="acct-desktop" style="margin:0"><button type="submit" class="btn ghost" style="gap:7px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></form>
+
+          <div class="acct-menu">
+            <button type="button" class="acct-avatar <?= $roleClass ?>" data-acct-toggle aria-label="Account menu" aria-haspopup="true"><?= e($roleInitial) ?></button>
+            <div class="acct-pop" hidden>
+              <div class="acct-name"><?= e($user['name']) ?><span><?= e(\App\role_label($user['role'])) ?></span></div>
+              <form method="post" action="/logout" style="margin:0"><button type="submit" class="btn ghost" style="width:100%;gap:8px;justify-content:flex-start"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Log out</button></form>
+            </div>
+          </div>
+
           <button type="button" id="help-toggle" class="icon-btn" aria-label="Help" title="How to use LIPA" aria-haspopup="dialog" style="font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1">?</button>
           <button type="button" id="theme-toggle" class="icon-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
         </div>
