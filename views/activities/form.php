@@ -1,6 +1,6 @@
 <?php $isNew = empty($a['id']); ?>
 <?php if (!empty($error)): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
-<form class="form-card" method="post" enctype="multipart/form-data" action="<?= $isNew ? '/activities' : '/activities/' . (int)$a['id'] ?>" style="max-width:820px">
+<form class="form-card" id="activity-form" method="post" enctype="multipart/form-data" action="<?= $isNew ? '/activities' : '/activities/' . (int)$a['id'] ?>" style="max-width:820px">
   <div class="form-grid">
     <div class="form-field"><label>Date</label><input type="date" name="date" value="<?= e($a['date'] ?? date('Y-m-d')) ?>" required></div>
     <div class="form-field"><label>Project</label>
@@ -26,11 +26,17 @@
       <?php endforeach; ?>
     </div>
   <?php endif; ?>
+  <?php
+    $remaining = !empty($a['id']) ? max(0, 5 - count($photos)) : 5;
+    $maxPost = \App\ini_bytes((string)ini_get('post_max_size'));
+    $maxFile = \App\ini_bytes((string)ini_get('upload_max_filesize'));
+  ?>
   <label class="upload-btn" style="margin-bottom:6px">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>Add photos
-    <input type="file" name="photos[]" accept=".jpg,.jpeg,.png" multiple style="display:none">
+    <input type="file" name="photos[]" id="photo-input" accept=".jpg,.jpeg,.png" multiple style="display:none" data-remaining="<?= (int)$remaining ?>" data-max-post="<?= (int)$maxPost ?>" data-max-file="<?= (int)$maxFile ?>">
   </label>
-  <div class="form-hint">Large photos are resized automatically. <?= !empty($a['id']) ? (5 - count($photos)) . ' slot(s) left.' : 'Up to 5.' ?></div>
+  <div class="photo-grid" id="photo-preview"></div>
+  <div class="form-hint" id="photo-hint" data-default="Large photos are resized automatically.">Large photos are resized automatically. <?= !empty($a['id']) ? $remaining . ' slot(s) left.' : 'Up to 5.' ?></div>
 
   <div class="fieldset-label">Linked expenses</div>
   <p class="fieldset-hint">Tick the expenses that belong to this activity. Search to narrow the list by description, category or date.</p>
@@ -58,7 +64,7 @@
   </div>
 
   <div class="form-actions">
-    <button type="submit" class="btn">Save</button>
+    <button type="submit" class="btn" id="activity-save">Save</button>
     <a href="/activities" class="btn ghost">Cancel</a>
   </div>
 </form>

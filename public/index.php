@@ -131,7 +131,23 @@ $router->add('POST', '/transfers/:id',        fn($p) => (new TransferController(
 $router->add('POST', '/transfers/:id/delete', fn($p) => (new TransferController())->delete((int)$p['id']));
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') { Csrf::check(); }
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // A POST that arrives with a body but empty $_POST means PHP discarded it for
+        // exceeding post_max_size (typical with several large photos). Show a clear
+        // message instead of the misleading CSRF "Forbidden".
+        if (!$_POST && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+            http_response_code(413);
+            $max = htmlspecialchars((string)ini_get('post_max_size'), ENT_QUOTES);
+            echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+               . '<div style="font-family:system-ui,sans-serif;max-width:520px;margin:12vh auto;padding:24px;text-align:center">'
+               . '<h1 style="font-size:1.2rem">Upload too large</h1>'
+               . '<p>The photos you selected exceed the server limit (max ' . $max . ' per upload). '
+               . 'Please add fewer or smaller photos and try again.</p>'
+               . '<p><a href="javascript:history.back()">&larr; Go back</a></p></div>';
+            exit;
+        }
+        Csrf::check();
+    }
     echo $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 } catch (ForbiddenException $ex) {
     if (!Auth::check()) { header('Location: /login'); exit; }
