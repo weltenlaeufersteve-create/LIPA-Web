@@ -30,8 +30,9 @@ thead th{ background:var(--surface-2); color:var(--faint); text-transform:upperc
   background:var(--accent); color:var(--accent-ink); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
 .btn.ghost{ background:#fff; color:var(--muted); border-color:var(--line); }
 
-.photos{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0; }
-.photos img{ max-height:150px; border:1px solid var(--line); border-radius:8px; }
+.photos{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:8px 0; }
+.photos img{ width:100%; aspect-ratio:4/3; object-fit:cover; border:1px solid var(--line); border-radius:8px; }
+@media (max-width:480px){ .photos{ grid-template-columns:repeat(2,1fr); } }
 .activity{ border-top:2px solid var(--line); padding-top:12px; margin-top:18px; }
 
 @page{ margin:14mm; }
