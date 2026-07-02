@@ -111,6 +111,14 @@ document.addEventListener('click', function (e) {
   });
 })();
 
+// Mobile account menu: toggle via the role circle; close on outside click or Esc.
+document.addEventListener('click', function (e) {
+  var pop = document.querySelector('.acct-pop');
+  if (!pop) return;
+  if (e.target.closest('[data-acct-toggle]')) { pop.hidden = !pop.hidden; }
+  else if (!e.target.closest('.acct-pop')) { pop.hidden = true; }
+});
+
 // Help popup: open via the "?" button, close via ✕, backdrop, or Esc.
 document.addEventListener('click', function (e) {
   var m = document.getElementById('help-modal');
@@ -122,6 +130,8 @@ document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape') return;
   var m = document.getElementById('help-modal');
   if (m && !m.hidden) { m.hidden = true; }
+  var pop = document.querySelector('.acct-pop');
+  if (pop && !pop.hidden) { pop.hidden = true; }
 });
 
 // Confirm dialogs for any form with data-confirm="message"
