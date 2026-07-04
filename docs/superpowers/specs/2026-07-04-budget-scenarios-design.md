@@ -19,7 +19,12 @@ Scenarios live in their own tables and their own screens. A test asserts no cros
 1. **Hybrid calculation.** Client-side JS gives a **live preview** (results update as you type); **server-side PHP (`ScenarioCalc`) is the single source of truth** — it computes on load, on save, and for the print page, and is what the tests cover. JS mirrors the same formulas purely for the live feel.
 2. **One page** combines inputs **and** results (edit + live results together), plus a separate print page. Not a form→detail split.
 3. **Multi-product & generic.** A scenario is a production **activity** with a **list of products**. Shared at the scenario level: start-up costs, partner funding, monthly fixed costs, allocations, status, linked project. **Per product:** name, `unit_name` (bar/jar/bowl…), sale price, cost-to-make-one, and its own three monthly volumes. Revenue and variable cost **sum across the product mix**. Nothing is product-hardcoded.
-4. **Cost per product = a single "cost to make one" number** (+ optional notes). Soap's per-batch material maths (batch total ÷ units per batch) is offered as an **optional client-side entry helper** that fills the unit cost; it is **not** stored as separate material rows (keeps the model lean for a 5-item line).
+4. **Cost per product is derived from its own materials.** Each product has a **materials-per-batch**
+   list (`budget_product_materials`) + a **`batch_yield`**; `unit_cost = Σ materials ÷ batch_yield`,
+   computed live in JS and cached on save. Different products carry different materials (pottery
+   bowl vs vase). A flat-cost product = one material line, yield 1. Products render as **collapsible
+   cards** (each with its nested materials table). *(This replaces the earlier "single cost number"
+   idea after the user asked for the mockup's per-batch calculation, bound per product.)*
 5. **`funded_amount`** is a single scalar on the scenario (one partner-funding line), subtracted from total start-up so break-even is on the NGO's own share (with a secondary "without funding" figure).
 6. **Whole-number display** on screen and print (planning projections read cleaner); amounts are **stored** as `DECIMAL(15,2)`.
 7. **Nav:** "Budget" sits **directly under Reports, in the same `.nav-group` box**.
