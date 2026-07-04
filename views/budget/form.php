@@ -98,13 +98,10 @@ $midcol  = 'style="background:var(--accent-quiet)"';
         <?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-card-remove aria-label="Remove product">Remove</button><?php endif; ?>
       </div>
       <div class="bcard-body">
-        <div class="form-grid">
+        <div class="form-grid" style="grid-template-columns:2fr 1fr 1.4fr">
           <div class="form-field"><label>Product name</label><input name="p_name[]" value="<?= e($p['name'] ?? '') ?>" placeholder="e.g. Decorative bowl" <?= $ro ?>></div>
           <div class="form-field"><label>Unit label</label><input name="p_unit[]" value="<?= e($p['unit_name'] ?? 'unit') ?>" placeholder="bowl" <?= $ro ?>></div>
-        </div>
-        <div class="form-grid">
           <div class="form-field"><label>Sale price / unit</label><input class="bnum" name="p_price[]" inputmode="numeric" value="<?= $p ? (float)$p['sale_price'] : '' ?>" <?= $ro ?>></div>
-          <div class="form-field"><label>Units per batch</label><input class="bnum" name="p_yield[]" inputmode="numeric" value="<?= $p ? (int)$p['batch_yield'] : '1' ?>" <?= $ro ?>></div>
         </div>
         <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
           <div class="form-field"><label style="color:var(--neg)">Pessimistic /mo</label><input class="bnum" name="p_low[]" inputmode="numeric" value="<?= $p ? (int)$p['units_low'] : '' ?>" <?= $ro ?>></div>
@@ -127,6 +124,7 @@ $midcol  = 'style="background:var(--accent-quiet)"';
           </tbody>
           <tfoot>
             <tr><td>Batch total</td><td class="r money" data-batch-total>—</td><td></td></tr>
+            <tr><td>÷ Units per batch</td><td class="r"><input class="bnum r" name="p_yield[]" inputmode="numeric" value="<?= $p ? (int)$p['batch_yield'] : '1' ?>" <?= $ro ?>></td><td></td></tr>
             <tr><td><b>= Cost per <span data-unit-label>unit</span></b></td><td class="r money" data-unit-cost style="color:var(--accent)">—</td><td></td></tr>
           </tfoot>
         </table></div>
