@@ -27,6 +27,7 @@ $ic = [
   'reports'   => '<path d="M4 4h16v4H4zM4 12h10v8H4zM18 12h2v8h-2z"/>',
   'settings'  => '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
   'log'       => '<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/>',
+  'budget'    => '<path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/>',
 ];
 $svg = static function (string $p): string {
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $p . '</svg>';
@@ -84,6 +85,7 @@ $svg = static function (string $p): string {
         <div class="nav-sep"></div>
         <div class="nav-group">
           <a class="nav-item<?= $navActive('/reports') ?>" href="/reports"><?= $svg($ic['reports']) ?>Reports</a>
+          <a class="nav-item<?= $navActive('/budget') ?>" href="/budget"><?= $svg($ic['budget']) ?>Budget</a>
         </div>
       </nav>
 
@@ -139,5 +141,6 @@ $svg = static function (string $p): string {
   <?= $content ?>
 <?php endif; ?>
 <script src="<?= asset('/assets/js/app.js') ?>"></script>
+<?php if (strpos($reqPath, '/budget') === 0): ?><script src="<?= asset('/assets/js/budget.js') ?>"></script><?php endif; ?>
 </body>
 </html>
