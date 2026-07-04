@@ -90,7 +90,8 @@ final class BudgetController
             'description'=>trim($in['description'] ?? ''),
             'project_id'=>$in['project_id'] ?? null,
             'status'=>in_array($in['status'] ?? '', ['draft','active','archived'], true) ? $in['status'] : 'draft',
-            'funded_amount'=>(float)($in['funded_amount'] ?? 0),
+            'funded_amount'=>$in['funded_amount'] ?? 0, // sanitised (comma-stripped) in the model
+
         ];
     }
 

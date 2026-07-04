@@ -96,6 +96,20 @@
     }
   });
 
+  // thousands-separators on the numeric fields: formatted on blur, raw while editing
+  function fmtField(el) {
+    var v = parseFloat(String(el.value).replace(/[^\d.-]/g, ''));
+    el.value = isNaN(v) ? '' : v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  }
+  document.addEventListener('focus', function (e) {
+    if (e.target.classList && e.target.classList.contains('bnum')) { e.target.value = e.target.value.replace(/,/g, ''); }
+  }, true);
+  document.addEventListener('blur', function (e) {
+    if (e.target.classList && e.target.classList.contains('bnum')) { fmtField(e.target); }
+  }, true);
+
   form.addEventListener('input', recompute);
+  // format the initial server-rendered values, then compute
+  Array.prototype.forEach.call(document.querySelectorAll('#budget-form .bnum'), function (el) { if (el.value !== '') fmtField(el); });
   recompute();
 })();
