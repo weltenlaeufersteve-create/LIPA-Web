@@ -39,34 +39,60 @@ $midcol  = 'style="background:var(--accent-quiet)"';
 
   <!-- PRODUCTS -->
   <h3 class="section-title" style="margin-top:26px">Products</h3>
-  <p class="fieldset-hint">Each product in this activity — price, cost to make one, and monthly volume (pessimistic / realistic / optimistic). Add as many as you like (soap = 1, a pottery line = several).</p>
-  <div class="card table-card"><div class="table-scroll">
-    <table class="ledger" id="tbl-products">
-      <thead><tr><th>Product</th><th>Unit</th><th class="r">Price</th><th class="r">Cost</th><th class="r">Margin</th><th class="r">Low</th><th class="r">Mid</th><th class="r">High</th><th class="r">Contrib/mo</th><th></th></tr></thead>
-      <tbody>
-        <?php $plist = $products ?: [null]; foreach ($plist as $p): ?>
-        <tr class="brow">
-          <td><input name="p_name[]" value="<?= e($p['name'] ?? '') ?>" placeholder="e.g. Decorative bowl" <?= $ro ?>></td>
-          <td><input name="p_unit[]" value="<?= e($p['unit_name'] ?? 'unit') ?>" style="max-width:64px" <?= $ro ?>></td>
-          <td class="r"><input class="bnum r" name="p_price[]" inputmode="numeric" value="<?= $p ? (float)$p['sale_price'] : '' ?>" style="max-width:100px" <?= $ro ?>></td>
-          <td class="r"><input class="bnum r" name="p_cost[]" inputmode="numeric" value="<?= $p ? (float)$p['unit_cost'] : '' ?>" style="max-width:100px" <?= $ro ?>></td>
-          <td class="r money" data-margin>—</td>
-          <td class="r"><input class="bnum r" name="p_low[]" inputmode="numeric" value="<?= $p ? (int)$p['units_low'] : '' ?>" style="max-width:64px" <?= $ro ?>></td>
-          <td class="r"><input class="bnum r" name="p_mid[]" inputmode="numeric" value="<?= $p ? (int)$p['units_mid'] : '' ?>" style="max-width:64px" <?= $ro ?>></td>
-          <td class="r"><input class="bnum r" name="p_high[]" inputmode="numeric" value="<?= $p ? (int)$p['units_high'] : '' ?>" style="max-width:64px" <?= $ro ?>></td>
-          <td class="r money" data-contrib>—</td>
-          <td class="r"><?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-row-remove aria-label="Remove">✕</button><?php endif; ?></td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div></div>
-  <?php if ($canEdit): ?>
-    <p style="margin:8px 0 0;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-      <button type="button" class="btn ghost" data-add-row="tbl-products">+ Add product</button>
-      <span class="fieldset-hint" style="margin:0">Cost helper: <input class="bnum" id="bh-total" inputmode="numeric" placeholder="batch total" style="max-width:110px"> ÷ <input class="bnum" id="bh-yield" inputmode="numeric" placeholder="per batch" style="max-width:100px"> = <b id="bh-result">—</b> / unit</span>
-    </p>
-  <?php endif; ?>
+  <p class="fieldset-hint">Each product in this activity has its own price, monthly volumes, and a <strong>materials-per-batch</strong> list that works out its cost per unit. Add as many products as you like (soap = 1, a pottery line = several). Click a product's header to collapse it.</p>
+  <div id="products">
+    <?php $plist = $products ?: [null]; foreach ($plist as $pi => $p): ?>
+    <div class="card bcard">
+      <div class="bcard-head">
+        <button type="button" class="bcard-toggle" aria-label="Collapse">▾</button>
+        <span class="bcard-title" data-title><?= e($p['name'] ?? '') ?: 'New product' ?></span>
+        <span class="bcard-sum muted-cell" data-sum></span>
+        <?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-card-remove aria-label="Remove product">Remove</button><?php endif; ?>
+      </div>
+      <div class="bcard-body">
+        <div class="form-grid">
+          <div class="form-field"><label>Product name</label><input name="p_name[]" value="<?= e($p['name'] ?? '') ?>" placeholder="e.g. Decorative bowl" <?= $ro ?>></div>
+          <div class="form-field"><label>Unit label</label><input name="p_unit[]" value="<?= e($p['unit_name'] ?? 'unit') ?>" placeholder="bowl" <?= $ro ?>></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-field"><label>Sale price / unit</label><input class="bnum" name="p_price[]" inputmode="numeric" value="<?= $p ? (float)$p['sale_price'] : '' ?>" <?= $ro ?>></div>
+          <div class="form-field"><label>Units per batch</label><input class="bnum" name="p_yield[]" inputmode="numeric" value="<?= $p ? (int)$p['batch_yield'] : '1' ?>" <?= $ro ?>></div>
+        </div>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="form-field"><label style="color:var(--neg)">Pessimistic /mo</label><input class="bnum" name="p_low[]" inputmode="numeric" value="<?= $p ? (int)$p['units_low'] : '' ?>" <?= $ro ?>></div>
+          <div class="form-field"><label>Realistic /mo</label><input class="bnum" name="p_mid[]" inputmode="numeric" value="<?= $p ? (int)$p['units_mid'] : '' ?>" <?= $ro ?>></div>
+          <div class="form-field"><label style="color:var(--pos)">Optimistic /mo</label><input class="bnum" name="p_high[]" inputmode="numeric" value="<?= $p ? (int)$p['units_high'] : '' ?>" <?= $ro ?>></div>
+        </div>
+
+        <div class="fieldset-label" style="margin:18px 0 4px">Materials per batch</div>
+        <p class="fieldset-hint" style="margin:0 0 8px">What one production run costs, bought in bulk — divided by the units per batch above.</p>
+        <div class="card table-card"><table class="ledger bmat">
+          <thead><tr><th>Material</th><th class="r">Cost / batch</th><th></th></tr></thead>
+          <tbody>
+            <?php $mats = (!empty($p['materials']) ? $p['materials'] : [null]); foreach ($mats as $m): ?>
+            <tr class="bmrow">
+              <td><input name="p_mat_name[<?= $pi ?>][]" value="<?= e($m['name'] ?? '') ?>" placeholder="e.g. Oils & fats" <?= $ro ?>></td>
+              <td class="r"><input class="bnum r" name="p_mat_amount[<?= $pi ?>][]" inputmode="numeric" value="<?= $m ? (float)$m['amount'] : '' ?>" <?= $ro ?>></td>
+              <td class="r"><?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-row-remove aria-label="Remove">✕</button><?php endif; ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+          <tfoot>
+            <tr><td>Batch total</td><td class="r money" data-batch-total>—</td><td></td></tr>
+            <tr><td><b>= Cost per <span data-unit-label>unit</span></b></td><td class="r money" data-unit-cost style="color:var(--accent)">—</td><td></td></tr>
+          </tfoot>
+        </table></div>
+        <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-material>+ Add material</button></p><?php endif; ?>
+
+        <div class="row-between" style="margin-top:12px">
+          <span class="muted-cell">Margin / unit: <b class="money" data-margin>—</b></span>
+          <span class="muted-cell">Contribution / mo (realistic): <b class="money" data-contrib>—</b></span>
+        </div>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+  <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-product>+ Add product</button></p><?php endif; ?>
 
   <!-- COSTS -->
   <div class="form-grid" style="margin-top:26px">

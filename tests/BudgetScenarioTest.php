@@ -10,8 +10,14 @@ final class BudgetScenarioTest extends DatabaseTestCase
         $this->assertSame('Soap', BudgetScenario::find($id)['name']);
 
         BudgetScenario::setProducts($id, [
-            ['name'=>'Bar','unit_name'=>'bar','sale_price'=>2500,'unit_cost'=>1250,'units_low'=>150,'units_mid'=>300,'units_high'=>500,'notes'=>'','sort'=>0],
+            ['name'=>'Bar','unit_name'=>'bar','sale_price'=>2500,'batch_yield'=>100,'units_low'=>150,'units_mid'=>300,'units_high'=>500,'notes'=>'','sort'=>0,
+             'materials'=>[['name'=>'Oils','amount'=>80000],['name'=>'Soda','amount'=>15000],['name'=>'Wrap','amount'=>30000]]],
         ]);
+        // unit_cost is derived + cached: (80k+15k+30k) ÷ 100 = 1,250
+        $prod = BudgetScenario::products($id)[0];
+        $this->assertEquals(1250.0, (float)$prod['unit_cost']);
+        $this->assertSame(100, (int)$prod['batch_yield']);
+        $this->assertCount(3, BudgetScenario::materials((int)$prod['id']));
         BudgetScenario::setItems($id, [
             ['item_type'=>'one_time','name'=>'Molds','amount'=>800000,'notes'=>'','sort'=>0],
             ['item_type'=>'monthly_fixed','name'=>'Rent','amount'=>200000,'notes'=>'','sort'=>0],

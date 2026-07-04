@@ -72,7 +72,11 @@ final class BudgetController
         Auth::requireRole('admin','editor','viewer');
         $s = BudgetScenario::find($id);
         if (!$s) { http_response_code(404); return 'Not found'; }
-        $products = BudgetScenario::products($id);
+        $products = [];
+        foreach (BudgetScenario::products($id) as $p) {
+            $p['materials'] = BudgetScenario::materials((int)$p['id']);
+            $products[] = $p;
+        }
         $items = BudgetScenario::items($id);
         $allocations = BudgetScenario::allocations($id);
         $calc = ScenarioCalc::compute($s, $products, $items, $allocations);
@@ -97,16 +101,43 @@ final class BudgetController
 
     private function saveChildren(int $id): void
     {
-        BudgetScenario::setProducts($id, $this->rows($_POST, 'p_', [
-            'name'=>'name','unit_name'=>'unit','sale_price'=>'price','unit_cost'=>'cost',
-            'units_low'=>'low','units_mid'=>'mid','units_high'=>'high','notes'=>'notes',
-        ]));
+        BudgetScenario::setProducts($id, $this->productRows($_POST));
         $one = $this->rows($_POST, 'ot_', ['name'=>'name','amount'=>'amount','notes'=>'notes']);
         foreach ($one as &$r) { $r['item_type'] = 'one_time'; } unset($r);
         $fix = $this->rows($_POST, 'mf_', ['name'=>'name','amount'=>'amount','notes'=>'notes']);
         foreach ($fix as &$r) { $r['item_type'] = 'monthly_fixed'; } unset($r);
         BudgetScenario::setItems($id, array_merge($one, $fix));
         BudgetScenario::setAllocations($id, $this->rows($_POST, 'al_', ['name'=>'name','monthly_amount'=>'amount']));
+    }
+
+    /** Parse products (positional p_* arrays) + each product's materials (nested p_mat_*[i][]). */
+    private function productRows(array $post): array
+    {
+        $names = $post['p_name'] ?? [];
+        $out = [];
+        foreach ($names as $i => $_) {
+            if (trim((string)($post['p_name'][$i] ?? '')) === '') { continue; }
+            $matNames = $post['p_mat_name'][$i] ?? [];
+            $matAmts  = $post['p_mat_amount'][$i] ?? [];
+            $materials = [];
+            foreach ($matNames as $j => $mn) {
+                if (trim((string)$mn) === '') { continue; }
+                $materials[] = ['name'=>$mn, 'amount'=>$matAmts[$j] ?? 0, 'sort'=>$j];
+            }
+            $out[] = [
+                'name'=>$post['p_name'][$i],
+                'unit_name'=>$post['p_unit'][$i] ?? 'unit',
+                'sale_price'=>$post['p_price'][$i] ?? 0,
+                'batch_yield'=>$post['p_yield'][$i] ?? 1,
+                'units_low'=>$post['p_low'][$i] ?? 0,
+                'units_mid'=>$post['p_mid'][$i] ?? 0,
+                'units_high'=>$post['p_high'][$i] ?? 0,
+                'notes'=>$post['p_notes'][$i] ?? '',
+                'materials'=>$materials,
+                'sort'=>$i,
+            ];
+        }
+        return $out;
     }
 
     /** Zip parallel POST arrays prefix+field[] into row dicts; skip rows with an empty 'name'. */
@@ -135,7 +166,13 @@ final class BudgetController
     private function formData(?array $row, ?string $error = null): array
     {
         $id = isset($row['id']) ? (int)$row['id'] : 0;
-        $products = $id ? BudgetScenario::products($id) : [];
+        $products = [];
+        if ($id) {
+            foreach (BudgetScenario::products($id) as $p) {
+                $p['materials'] = BudgetScenario::materials((int)$p['id']);
+                $products[] = $p;
+            }
+        }
         $items = $id ? BudgetScenario::items($id) : [];
         $allocs = $id ? BudgetScenario::allocations($id) : [];
         $scen = $row ?: ['funded_amount'=>0];

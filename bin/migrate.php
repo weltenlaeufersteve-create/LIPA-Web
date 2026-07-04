@@ -135,6 +135,21 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS budget_products (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 echo "budget_products table ok\n";
 
+if (!columnExists($pdo, 'budget_products', 'batch_yield')) {
+    $pdo->exec('ALTER TABLE budget_products ADD COLUMN batch_yield INT NOT NULL DEFAULT 1 AFTER unit_cost');
+    echo "budget_products.batch_yield added\n";
+} else { echo "budget_products.batch_yield exists\n"; }
+
+$pdo->exec("CREATE TABLE IF NOT EXISTS budget_product_materials (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  name VARCHAR(190) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+  sort INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_bmat_product FOREIGN KEY (product_id) REFERENCES budget_products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+echo "budget_product_materials table ok\n";
+
 $pdo->exec("CREATE TABLE IF NOT EXISTS budget_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
   scenario_id INT NOT NULL,

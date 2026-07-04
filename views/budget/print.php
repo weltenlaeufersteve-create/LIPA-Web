@@ -60,6 +60,26 @@ $mid = $calc['cases']['mid'];
   </tbody>
 </table>
 
+<?php $withMaterials = array_filter($products, fn($p) => !empty($p['materials'])); ?>
+<?php if (!empty($withMaterials)): ?>
+<h3>How each unit cost is worked out</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:4px">
+  <?php foreach ($products as $p): if (empty($p['materials'])) continue; $bt = 0; ?>
+    <div>
+      <div style="font-weight:700;margin-bottom:4px"><?= e($p['name']) ?></div>
+      <table class="t num">
+        <?php foreach ($p['materials'] as $m): $bt += (float)$m['amount']; ?>
+          <tr><td><?= e($m['name']) ?></td><td class="r"><?= $f0($m['amount']) ?></td></tr>
+        <?php endforeach; ?>
+        <tr class="total-row"><td>Batch total</td><td class="r"><?= $f0($bt) ?></td></tr>
+        <tr><td class="muted">÷ <?= (int)$p['batch_yield'] ?> per batch</td><td class="r"></td></tr>
+        <tr><td><strong>= Cost / <?= e($p['unit_name']) ?></strong></td><td class="r" style="color:var(--accent);font-weight:700"><?= $f0($p['unit_cost']) ?></td></tr>
+      </table>
+    </div>
+  <?php endforeach; ?>
+</div>
+<?php endif; ?>
+
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px">
   <div>
     <h3>Start-up costs</h3>

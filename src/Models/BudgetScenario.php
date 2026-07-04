@@ -69,17 +69,36 @@ final class BudgetScenario
         return $st->fetchAll();
     }
 
+    public static function materials(int $productId): array
+    {
+        $st = Database::pdo()->prepare('SELECT * FROM budget_product_materials WHERE product_id=:id ORDER BY sort, id');
+        $st->execute([':id'=>$productId]);
+        return $st->fetchAll();
+    }
+
     public static function setProducts(int $id, array $rows): void
     {
         $pdo = Database::pdo();
+        // deleting the scenario's products cascades their materials
         $pdo->prepare('DELETE FROM budget_products WHERE scenario_id=:id')->execute([':id'=>$id]);
-        $ins = $pdo->prepare('INSERT INTO budget_products (scenario_id,name,unit_name,sale_price,unit_cost,units_low,units_mid,units_high,notes,sort)
-            VALUES (:s,:n,:u,:sp,:uc,:l,:m,:h,:no,:so)');
+        $ins = $pdo->prepare('INSERT INTO budget_products (scenario_id,name,unit_name,sale_price,unit_cost,batch_yield,units_low,units_mid,units_high,notes,sort)
+            VALUES (:s,:n,:u,:sp,:uc,:by,:l,:m,:h,:no,:so)');
+        $insM = $pdo->prepare('INSERT INTO budget_product_materials (product_id,name,amount,sort) VALUES (:p,:n,:a,:so)');
         foreach ($rows as $i => $r) {
+            $yield = max(self::ni($r['batch_yield'] ?? 1), 1);
+            $materials = $r['materials'] ?? [];
+            $batchTotal = 0.0;
+            foreach ($materials as $m) { $batchTotal += self::n($m['amount'] ?? 0); }
+            $unitCost = round($batchTotal / $yield, 2);   // derived, cached
             $ins->execute([':s'=>$id, ':n'=>$r['name'], ':u'=>$r['unit_name'] ?: 'unit',
-                ':sp'=>self::n($r['sale_price'] ?? 0), ':uc'=>self::n($r['unit_cost'] ?? 0),
+                ':sp'=>self::n($r['sale_price'] ?? 0), ':uc'=>$unitCost, ':by'=>$yield,
                 ':l'=>self::ni($r['units_low'] ?? 0), ':m'=>self::ni($r['units_mid'] ?? 0), ':h'=>self::ni($r['units_high'] ?? 0),
                 ':no'=>$r['notes'] ?: null, ':so'=>$r['sort'] ?? $i]);
+            $pid = (int)$pdo->lastInsertId();
+            foreach ($materials as $j => $m) {
+                if (trim((string)($m['name'] ?? '')) === '') { continue; }
+                $insM->execute([':p'=>$pid, ':n'=>$m['name'], ':a'=>self::n($m['amount'] ?? 0), ':so'=>$m['sort'] ?? $j]);
+            }
         }
     }
 

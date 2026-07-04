@@ -17,7 +17,7 @@ abstract class DatabaseTestCase extends TestCase
         self::loadSchema();
         $pdo = Database::pdo();
         $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
-        foreach (['activity_log','budget_products','budget_items','budget_allocations','budget_scenarios','transfers','income','expenses','activity_photos','activities','accounts','categories','projects','contacts','settings','users'] as $t) {
+        foreach (['activity_log','budget_product_materials','budget_products','budget_items','budget_allocations','budget_scenarios','transfers','income','expenses','activity_photos','activities','accounts','categories','projects','contacts','settings','users'] as $t) {
             $pdo->exec("TRUNCATE TABLE {$t}");
         }
         $pdo->exec('SET FOREIGN_KEY_CHECKS=1');

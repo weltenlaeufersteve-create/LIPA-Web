@@ -91,13 +91,23 @@ CREATE TABLE IF NOT EXISTS budget_products (
   name VARCHAR(190) NOT NULL,
   unit_name VARCHAR(20) NOT NULL DEFAULT 'unit',
   sale_price DECIMAL(15,2) NOT NULL DEFAULT 0,
-  unit_cost DECIMAL(15,2) NOT NULL DEFAULT 0,
+  unit_cost DECIMAL(15,2) NOT NULL DEFAULT 0,   -- derived = Σ materials ÷ batch_yield (cached on save)
+  batch_yield INT NOT NULL DEFAULT 1,           -- units produced per batch of materials
   units_low INT NOT NULL DEFAULT 0,
   units_mid INT NOT NULL DEFAULT 0,
   units_high INT NOT NULL DEFAULT 0,
   notes VARCHAR(255) NULL,
   sort INT NOT NULL DEFAULT 0,
   CONSTRAINT fk_bprod_scen FOREIGN KEY (scenario_id) REFERENCES budget_scenarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS budget_product_materials (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  name VARCHAR(190) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL DEFAULT 0,       -- cost for one batch
+  sort INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_bmat_product FOREIGN KEY (product_id) REFERENCES budget_products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS budget_items (
