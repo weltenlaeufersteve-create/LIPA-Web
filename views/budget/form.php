@@ -6,7 +6,7 @@ $sc      = $s ?: [];
 $midcol  = 'style="background:var(--accent-quiet)"';
 ?>
 <?php if (!empty($error)): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?>
-<form class="form-card" id="budget-form" method="post" action="<?= $isNew ? '/budget' : '/budget/' . (int)$s['id'] ?>" style="max-width:none">
+<form id="budget-form" method="post" action="<?= $isNew ? '/budget' : '/budget/' . (int)$s['id'] ?>">
   <div class="row-between" style="margin-bottom:16px">
     <div class="form-hint" style="margin:0;max-width:520px">Planning only — a scenario never creates entries in Income/Expenses and never appears in statements, balances, or the Excel export.</div>
     <div style="display:flex;gap:8px">
@@ -15,31 +15,79 @@ $midcol  = 'style="background:var(--accent-quiet)"';
     </div>
   </div>
 
-  <div class="form-grid">
-    <div class="form-field"><label>Scenario name</label><input name="name" value="<?= e($sc['name'] ?? '') ?>" required <?= $ro ?>></div>
-    <div class="form-field"><label>Status</label>
-      <select name="status" <?= $ro ?>>
-        <?php foreach (['draft','active','archived'] as $st): ?>
-          <option value="<?= $st ?>" <?= (($sc['status'] ?? 'draft') === $st) ? 'selected' : '' ?>><?= ucfirst($st) ?></option>
-        <?php endforeach; ?>
-      </select>
+  <!-- Scenario -->
+  <h3 class="section-title" style="margin-top:0">Scenario</h3>
+  <div class="card" style="padding:16px 20px 4px">
+    <div class="form-grid">
+      <div class="form-field"><label>Scenario name</label><input name="name" value="<?= e($sc['name'] ?? '') ?>" required <?= $ro ?>></div>
+      <div class="form-field"><label>Status</label>
+        <select name="status" <?= $ro ?>>
+          <?php foreach (['draft','active','archived'] as $st): ?>
+            <option value="<?= $st ?>" <?= (($sc['status'] ?? 'draft') === $st) ? 'selected' : '' ?>><?= ucfirst($st) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
     </div>
-  </div>
-  <div class="form-grid">
-    <div class="form-field"><label>Project (optional)</label>
-      <select name="project_id" <?= $ro ?>>
-        <option value="">—</option>
-        <?php foreach ($projects as $p): ?>
-          <option value="<?= (int)$p['id'] ?>" <?= ((int)($sc['project_id'] ?? 0) === (int)$p['id']) ? 'selected' : '' ?>><?= e($p['name']) ?></option>
-        <?php endforeach; ?>
-      </select>
+    <div class="form-grid">
+      <div class="form-field"><label>Project (optional)</label>
+        <select name="project_id" <?= $ro ?>>
+          <option value="">—</option>
+          <?php foreach ($projects as $p): ?>
+            <option value="<?= (int)$p['id'] ?>" <?= ((int)($sc['project_id'] ?? 0) === (int)$p['id']) ? 'selected' : '' ?>><?= e($p['name']) ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+      <div class="form-field"><label>Description</label><input name="description" value="<?= e($sc['description'] ?? '') ?>" <?= $ro ?>></div>
     </div>
-    <div class="form-field"><label>Description</label><input name="description" value="<?= e($sc['description'] ?? '') ?>" <?= $ro ?>></div>
   </div>
 
-  <!-- PRODUCTS -->
+  <!-- Start-up + Fixed (shared costs) -->
+  <div class="form-grid" style="margin-top:22px">
+    <div>
+      <h3 class="section-title" style="margin-top:0">Start-up costs</h3>
+      <p class="fieldset-hint">One-time investment.</p>
+      <div class="card table-card"><table class="ledger" id="tbl-onetime">
+        <thead><tr><th>Item</th><th class="r">Amount</th><th></th></tr></thead>
+        <tbody>
+          <?php $olist = $one_time ?: [null]; foreach ($olist as $o): ?>
+          <tr class="brow">
+            <td><input name="ot_name[]" value="<?= e($o['name'] ?? '') ?>" placeholder="e.g. Kiln" <?= $ro ?>></td>
+            <td class="r"><input class="bnum r" name="ot_amount[]" inputmode="numeric" value="<?= $o ? (float)$o['amount'] : '' ?>" <?= $ro ?>></td>
+            <td class="r"><?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-row-remove aria-label="Remove">✕</button><?php endif; ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+        <tfoot>
+          <tr><td>Total start-up</td><td class="r money" id="r-onetime">—</td><td></td></tr>
+          <tr><td>− Funded by partner</td><td class="r"><input class="bnum r" name="funded_amount" inputmode="numeric" value="<?= (float)($sc['funded_amount'] ?? 0) ?>" <?= $ro ?>></td><td></td></tr>
+          <tr><td><b>= NGO share to recover</b></td><td class="r money" id="r-netstartup" style="color:var(--accent)">—</td><td></td></tr>
+        </tfoot>
+      </table></div>
+      <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-row="tbl-onetime">+ Add start-up cost</button></p><?php endif; ?>
+    </div>
+    <div>
+      <h3 class="section-title" style="margin-top:0">Fixed costs / month</h3>
+      <p class="fieldset-hint">Run whether you sell or not.</p>
+      <div class="card table-card"><table class="ledger" id="tbl-fixed">
+        <thead><tr><th>Item</th><th class="r">Amount</th><th></th></tr></thead>
+        <tbody>
+          <?php $flist = $monthly_fixed ?: [null]; foreach ($flist as $f): ?>
+          <tr class="brow">
+            <td><input name="mf_name[]" value="<?= e($f['name'] ?? '') ?>" placeholder="e.g. Rent share" <?= $ro ?>></td>
+            <td class="r"><input class="bnum r" name="mf_amount[]" inputmode="numeric" value="<?= $f ? (float)$f['amount'] : '' ?>" <?= $ro ?>></td>
+            <td class="r"><?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-row-remove aria-label="Remove">✕</button><?php endif; ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+        <tfoot><tr><td>Total / month</td><td class="r money" id="r-fixed">—</td><td></td></tr></tfoot>
+      </table></div>
+      <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-row="tbl-fixed">+ Add fixed cost</button></p><?php endif; ?>
+    </div>
+  </div>
+
+  <!-- Products -->
   <h3 class="section-title" style="margin-top:26px">Products</h3>
-  <p class="fieldset-hint">Each product in this activity has its own price, monthly volumes, and a <strong>materials-per-batch</strong> list that works out its cost per unit. Add as many products as you like (soap = 1, a pottery line = several). Click a product's header to collapse it.</p>
+  <p class="fieldset-hint">Each product has its own price, monthly volumes, and a <strong>materials-per-batch</strong> list that works out its cost per unit. Add as many as you like (soap = 1, a pottery line = several). Click a product's header to collapse it.</p>
   <div id="products">
     <?php $plist = $products ?: [null]; foreach ($plist as $pi => $p): ?>
     <div class="card bcard">
@@ -66,7 +114,7 @@ $midcol  = 'style="background:var(--accent-quiet)"';
 
         <div class="fieldset-label" style="margin:18px 0 4px">Materials per batch</div>
         <p class="fieldset-hint" style="margin:0 0 8px">What one production run costs, bought in bulk — divided by the units per batch above.</p>
-        <div class="card table-card"><table class="ledger bmat">
+        <div class="table-scroll"><table class="ledger bmat">
           <thead><tr><th>Material</th><th class="r">Cost / batch</th><th></th></tr></thead>
           <tbody>
             <?php $mats = (!empty($p['materials']) ? $p['materials'] : [null]); foreach ($mats as $m): ?>
@@ -94,51 +142,7 @@ $midcol  = 'style="background:var(--accent-quiet)"';
   </div>
   <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-product>+ Add product</button></p><?php endif; ?>
 
-  <!-- COSTS -->
-  <div class="form-grid" style="margin-top:26px">
-    <div>
-      <h3 class="section-title">Start-up costs</h3>
-      <p class="fieldset-hint">One-time investment.</p>
-      <div class="card table-card"><table class="ledger" id="tbl-onetime">
-        <thead><tr><th>Item</th><th class="r">Amount</th><th></th></tr></thead>
-        <tbody>
-          <?php $olist = $one_time ?: [null]; foreach ($olist as $o): ?>
-          <tr class="brow">
-            <td><input name="ot_name[]" value="<?= e($o['name'] ?? '') ?>" placeholder="e.g. Kiln" <?= $ro ?>></td>
-            <td class="r"><input class="bnum r" name="ot_amount[]" inputmode="numeric" value="<?= $o ? (float)$o['amount'] : '' ?>" <?= $ro ?>></td>
-            <td class="r"><?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-row-remove aria-label="Remove">✕</button><?php endif; ?></td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-        <tfoot>
-          <tr><td>Total start-up</td><td class="r money" id="r-onetime">—</td><td></td></tr>
-          <tr><td>− Funded by partner</td><td class="r"><input class="bnum r" name="funded_amount" inputmode="numeric" value="<?= (float)($sc['funded_amount'] ?? 0) ?>" <?= $ro ?>></td><td></td></tr>
-          <tr><td><b>= NGO share to recover</b></td><td class="r money" id="r-netstartup" style="color:var(--accent)">—</td><td></td></tr>
-        </tfoot>
-      </table></div>
-      <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-row="tbl-onetime">+ Add start-up cost</button></p><?php endif; ?>
-    </div>
-    <div>
-      <h3 class="section-title">Fixed costs / month</h3>
-      <p class="fieldset-hint">Run whether you sell or not.</p>
-      <div class="card table-card"><table class="ledger" id="tbl-fixed">
-        <thead><tr><th>Item</th><th class="r">Amount</th><th></th></tr></thead>
-        <tbody>
-          <?php $flist = $monthly_fixed ?: [null]; foreach ($flist as $f): ?>
-          <tr class="brow">
-            <td><input name="mf_name[]" value="<?= e($f['name'] ?? '') ?>" placeholder="e.g. Rent share" <?= $ro ?>></td>
-            <td class="r"><input class="bnum r" name="mf_amount[]" inputmode="numeric" value="<?= $f ? (float)$f['amount'] : '' ?>" <?= $ro ?>></td>
-            <td class="r"><?php if ($canEdit): ?><button type="button" class="btn-link-danger" data-row-remove aria-label="Remove">✕</button><?php endif; ?></td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-        <tfoot><tr><td>Total / month</td><td class="r money" id="r-fixed">—</td><td></td></tr></tfoot>
-      </table></div>
-      <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-row="tbl-fixed">+ Add fixed cost</button></p><?php endif; ?>
-    </div>
-  </div>
-
-  <!-- RESULTS -->
+  <!-- Results -->
   <h3 class="section-title" style="margin-top:26px">Results</h3>
   <div class="kpis">
     <div class="card kpi"><div class="kpi-label">Revenue / mo (realistic)</div><div class="kpi-value num" id="r-revenue">—</div><div class="kpi-tag">TZS</div></div>
@@ -159,7 +163,7 @@ $midcol  = 'style="background:var(--accent-quiet)"';
     </tbody>
   </table></div></div>
 
-  <!-- ALLOCATIONS -->
+  <!-- Profit payments (allocations) -->
   <h3 class="section-title">What the profit pays for</h3>
   <p class="fieldset-hint">Realistic case, covered in order (top first).</p>
   <div class="card table-card"><table class="ledger" id="tbl-alloc">
