@@ -70,6 +70,56 @@ CREATE TABLE IF NOT EXISTS activity_photos (
   CONSTRAINT fk_photo_activity FOREIGN KEY (activity_id) REFERENCES activities(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- ── Budget scenarios (planning layer; never touches the cashbook) ──
+CREATE TABLE IF NOT EXISTS budget_scenarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(190) NOT NULL,
+  description TEXT NULL,
+  project_id INT NULL,
+  status ENUM('draft','active','archived') NOT NULL DEFAULT 'draft',
+  funded_amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+  created_by INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_bscen_project FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
+  CONSTRAINT fk_bscen_user    FOREIGN KEY (created_by) REFERENCES users(id)    ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS budget_products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  scenario_id INT NOT NULL,
+  name VARCHAR(190) NOT NULL,
+  unit_name VARCHAR(20) NOT NULL DEFAULT 'unit',
+  sale_price DECIMAL(15,2) NOT NULL DEFAULT 0,
+  unit_cost DECIMAL(15,2) NOT NULL DEFAULT 0,
+  units_low INT NOT NULL DEFAULT 0,
+  units_mid INT NOT NULL DEFAULT 0,
+  units_high INT NOT NULL DEFAULT 0,
+  notes VARCHAR(255) NULL,
+  sort INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_bprod_scen FOREIGN KEY (scenario_id) REFERENCES budget_scenarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS budget_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  scenario_id INT NOT NULL,
+  item_type ENUM('one_time','monthly_fixed') NOT NULL,
+  name VARCHAR(190) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+  notes VARCHAR(255) NULL,
+  sort INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_bitem_scen FOREIGN KEY (scenario_id) REFERENCES budget_scenarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS budget_allocations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  scenario_id INT NOT NULL,
+  name VARCHAR(190) NOT NULL,
+  monthly_amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+  sort INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_balloc_scen FOREIGN KEY (scenario_id) REFERENCES budget_scenarios(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS income (
   id INT AUTO_INCREMENT PRIMARY KEY,
   date DATE NOT NULL,
