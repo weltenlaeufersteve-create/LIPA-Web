@@ -141,5 +141,6 @@ $svg = static function (string $p): string {
   <?= $content ?>
 <?php endif; ?>
 <script src="<?= asset('/assets/js/app.js') ?>"></script>
+<?php if (strpos($reqPath, '/budget') === 0): ?><script src="<?= asset('/assets/js/budget.js') ?>"></script><?php endif; ?>
 </body>
 </html>
