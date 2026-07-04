@@ -22,6 +22,7 @@ use App\Controllers\SettingController;
 use App\Controllers\ReportController;
 use App\Controllers\ActivityController;
 use App\Controllers\ActivitiesController;
+use App\Controllers\BudgetController;
 use App\Controllers\AccountController;
 use App\Controllers\TransferController;
 
@@ -100,6 +101,15 @@ $router->add('GET', '/reports/export', fn() => (new ReportController())->export(
 $router->add('GET', '/reports/statement', fn() => (new ReportController())->statement());
 $router->add('GET', '/reports/org-statement', fn() => (new ReportController())->orgStatement());
 $router->add('GET', '/reports/activity-report', fn() => (new ReportController())->activityReport());
+
+// Budget scenarios (planning layer — never touches the cashbook)
+$router->add('GET',  '/budget',            fn() => (new BudgetController())->index());
+$router->add('GET',  '/budget/new',        fn() => (new BudgetController())->create());
+$router->add('POST', '/budget',            fn() => (new BudgetController())->store());
+$router->add('GET',  '/budget/:id',        fn($p) => (new BudgetController())->show((int)$p['id']));
+$router->add('POST', '/budget/:id',        fn($p) => (new BudgetController())->update((int)$p['id']));
+$router->add('POST', '/budget/:id/delete', fn($p) => (new BudgetController())->delete((int)$p['id']));
+$router->add('GET',  '/budget/:id/print',  fn($p) => (new BudgetController())->print((int)$p['id']));
 
 // Activities
 $router->add('GET',  '/activities',                       fn() => (new ActivitiesController())->index());
