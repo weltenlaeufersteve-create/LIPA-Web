@@ -44,6 +44,33 @@ $mid = $calc['cases']['mid'];
   <?php if (!empty($s['project_name'])): ?>Linked project: <?= e($s['project_name']) ?> &middot; <?php endif; ?>
   Currency: TZS</span></p>
 
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px">
+  <div>
+    <h3>Start-up costs</h3>
+    <table>
+      <tbody>
+        <?php foreach ($oneTimeItems as $it): ?>
+          <tr><td><?= e($it['name']) ?></td><td class="r num"><?= $f0($it['amount']) ?></td></tr>
+        <?php endforeach; ?>
+        <tr class="total-row"><td>Total start-up</td><td class="r num"><?= $f0($calc['one_time_total']) ?></td></tr>
+        <tr><td class="muted">− Funded by partner</td><td class="r num"><?= $f0($s['funded_amount']) ?></td></tr>
+        <tr><td><strong>= NGO share to recover</strong></td><td class="r num" style="color:var(--accent);font-weight:700"><?= $f0($calc['net_startup']) ?></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <h3>Fixed costs / month</h3>
+    <table>
+      <tbody>
+        <?php foreach ($fixedItems as $it): ?>
+          <tr><td><?= e($it['name']) ?></td><td class="r num"><?= $f0($it['amount']) ?></td></tr>
+        <?php endforeach; ?>
+        <tr class="total-row"><td>Total / month</td><td class="r num"><?= $f0($calc['fixed_total']) ?></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <h3>Products</h3>
 <table>
   <thead><tr><th>Product</th><th class="r">Price</th><th class="r">Cost</th><th class="r">Margin</th><th class="r">Units/mo (realistic)</th><th class="r">Contribution/mo</th></tr></thead>
@@ -81,33 +108,6 @@ $mid = $calc['cases']['mid'];
   <?php endforeach; ?>
 </div>
 <?php endif; ?>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px">
-  <div>
-    <h3>Start-up costs</h3>
-    <table>
-      <tbody>
-        <?php foreach ($oneTimeItems as $it): ?>
-          <tr><td><?= e($it['name']) ?></td><td class="r num"><?= $f0($it['amount']) ?></td></tr>
-        <?php endforeach; ?>
-        <tr class="total-row"><td>Total start-up</td><td class="r num"><?= $f0($calc['one_time_total']) ?></td></tr>
-        <tr><td class="muted">− Funded by partner</td><td class="r num"><?= $f0($s['funded_amount']) ?></td></tr>
-        <tr><td><strong>= NGO share to recover</strong></td><td class="r num" style="color:var(--accent);font-weight:700"><?= $f0($calc['net_startup']) ?></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div>
-    <h3>Fixed costs / month</h3>
-    <table>
-      <tbody>
-        <?php foreach ($fixedItems as $it): ?>
-          <tr><td><?= e($it['name']) ?></td><td class="r num"><?= $f0($it['amount']) ?></td></tr>
-        <?php endforeach; ?>
-        <tr class="total-row"><td>Total / month</td><td class="r num"><?= $f0($calc['fixed_total']) ?></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
 
 <h3>The three cases — per month</h3>
 <table class="cases">
