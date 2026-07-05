@@ -92,7 +92,7 @@ $mid = $calc['cases']['mid'];
 <?php $withMaterials = array_filter($products, fn($p) => !empty($p['materials'])); ?>
 <?php if (!empty($withMaterials)): ?>
 <h3>How each unit cost is worked out</h3>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:4px">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(calc((100% - 36px) / 3),1fr));gap:18px;margin-top:4px">
   <?php foreach ($products as $p): if (empty($p['materials'])) continue; $bt = 0; ?>
     <div>
       <div style="font-weight:700;margin-bottom:4px"><?= e($p['name']) ?></div>
