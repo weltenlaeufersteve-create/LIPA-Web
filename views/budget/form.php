@@ -42,7 +42,7 @@ $midcol  = 'style="background:var(--accent-quiet)"';
   </div>
 
   <!-- Start-up + Fixed (shared costs) -->
-  <div class="form-grid" style="margin-top:22px">
+  <div class="cost-grid" style="margin-top:22px">
     <div>
       <h3 class="section-title" style="margin-top:0">Start-up costs</h3>
       <p class="fieldset-hint">One-time investment.</p>
