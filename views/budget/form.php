@@ -103,11 +103,6 @@ $midcol  = 'style="background:var(--accent-quiet)"';
           <div class="form-field"><label>Unit label</label><input name="p_unit[]" value="<?= e($p['unit_name'] ?? 'unit') ?>" placeholder="bowl" <?= $ro ?>></div>
           <div class="form-field"><label>Sale price / unit</label><input class="bnum" name="p_price[]" inputmode="numeric" value="<?= $p ? (float)$p['sale_price'] : '' ?>" <?= $ro ?>></div>
         </div>
-        <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
-          <div class="form-field"><label style="color:var(--neg)">Pessimistic /mo</label><input class="bnum" name="p_low[]" inputmode="numeric" value="<?= $p ? (int)$p['units_low'] : '' ?>" <?= $ro ?>></div>
-          <div class="form-field"><label>Realistic /mo</label><input class="bnum" name="p_mid[]" inputmode="numeric" value="<?= $p ? (int)$p['units_mid'] : '' ?>" <?= $ro ?>></div>
-          <div class="form-field"><label style="color:var(--pos)">Optimistic /mo</label><input class="bnum" name="p_high[]" inputmode="numeric" value="<?= $p ? (int)$p['units_high'] : '' ?>" <?= $ro ?>></div>
-        </div>
 
         <div class="fieldset-label" style="margin:18px 0 4px">Materials per batch</div>
         <p class="fieldset-hint" style="margin:0 0 8px">What one production run costs, bought in bulk — divided by the units per batch above.</p>
@@ -130,6 +125,14 @@ $midcol  = 'style="background:var(--accent-quiet)"';
         </table></div>
         <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-material>+ Add material</button></p><?php endif; ?>
 
+        <div class="fieldset-label" style="margin:18px 0 4px">Expected monthly sales</div>
+        <p class="fieldset-hint" style="margin:0 0 8px">How many <span data-unit-label>unit</span>s you expect to sell each month in each case.</p>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="form-field"><label style="color:var(--neg)">Pessimistic /mo</label><input class="bnum" name="p_low[]" inputmode="numeric" value="<?= $p ? (int)$p['units_low'] : '' ?>" <?= $ro ?>></div>
+          <div class="form-field"><label>Realistic /mo</label><input class="bnum" name="p_mid[]" inputmode="numeric" value="<?= $p ? (int)$p['units_mid'] : '' ?>" <?= $ro ?>></div>
+          <div class="form-field"><label style="color:var(--pos)">Optimistic /mo</label><input class="bnum" name="p_high[]" inputmode="numeric" value="<?= $p ? (int)$p['units_high'] : '' ?>" <?= $ro ?>></div>
+        </div>
+
         <div class="row-between" style="margin-top:12px">
           <span class="muted-cell">Margin / unit: <b class="money" data-margin>—</b></span>
           <span class="muted-cell">Contribution / mo (realistic): <b class="money" data-contrib>—</b></span>
@@ -140,15 +143,8 @@ $midcol  = 'style="background:var(--accent-quiet)"';
   </div>
   <?php if ($canEdit): ?><p style="margin:8px 0 0"><button type="button" class="btn ghost" data-add-product>+ Add product</button></p><?php endif; ?>
 
-  <!-- Results -->
-  <h3 class="section-title" style="margin-top:26px">Results</h3>
-  <div class="kpis">
-    <div class="card kpi"><div class="kpi-label">Revenue / mo (realistic)</div><div class="kpi-value num" id="r-revenue">—</div><div class="kpi-tag">TZS</div></div>
-    <div class="card kpi"><div class="kpi-label">Break-even</div><div class="kpi-value num" id="r-breakeven">—</div><div class="kpi-tag">NGO share ÷ realistic profit</div></div>
-    <div class="card kpi hero"><div class="kpi-label">Monthly profit — realistic</div><div class="kpi-value num" id="r-profit">—</div><div class="kpi-tag">After fixed costs</div></div>
-  </div>
-
-  <h3 class="section-title">The three cases</h3>
+  <!-- The three cases (overview first, then the headline result) -->
+  <h3 class="section-title" style="margin-top:26px">The three cases</h3>
   <div class="card table-card"><div class="table-scroll"><table class="ledger">
     <thead><tr><th>Per month</th><th class="r">Pessimistic</th><th class="r" <?= $midcol ?>>Realistic</th><th class="r">Optimistic</th></tr></thead>
     <tbody>
@@ -160,6 +156,14 @@ $midcol  = 'style="background:var(--accent-quiet)"';
       <tr><td class="muted-cell">Break-even</td><td class="r" id="c-low-be">—</td><td class="r" <?= $midcol ?> id="c-mid-be">—</td><td class="r" id="c-high-be">—</td></tr>
     </tbody>
   </table></div></div>
+
+  <!-- Results -->
+  <h3 class="section-title">Result — realistic case</h3>
+  <div class="kpis">
+    <div class="card kpi"><div class="kpi-label">Revenue / mo (realistic)</div><div class="kpi-value num" id="r-revenue">—</div><div class="kpi-tag">TZS</div></div>
+    <div class="card kpi"><div class="kpi-label">Break-even</div><div class="kpi-value num" id="r-breakeven">—</div><div class="kpi-tag">NGO share ÷ realistic profit</div></div>
+    <div class="card kpi hero"><div class="kpi-label">Monthly profit — realistic</div><div class="kpi-value num" id="r-profit">—</div><div class="kpi-tag">After fixed costs</div></div>
+  </div>
 
   <!-- Profit payments (allocations) -->
   <h3 class="section-title">What the profit pays for</h3>
