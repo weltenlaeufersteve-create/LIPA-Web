@@ -227,7 +227,7 @@ a{ color:var(--accent); }
 .toast-error{ background:var(--neg); color:#fff; }
 
 /* Login (no shell) */
-.login-wrap,.login-card{ max-width:360px; margin:8vh auto; padding:28px; background:var(--surface);
+.login-wrap,.login-card{ max-width:360px; margin:8vh auto 0; padding:28px; background:var(--surface);
   border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
 .login-org{ font-family:var(--font-display); font-weight:700; text-align:center; margin:0 0 4px; }
 .login-logo{ max-height:72px; max-width:80%; margin:0 auto 6px; display:block; }
