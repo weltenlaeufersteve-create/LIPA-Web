@@ -15,6 +15,8 @@ $mid = $calc['cases']['mid'];
 <style>:root{--accent: <?= e(\App\hex_color($set['accent_color'] ?? null)) ?>;}
   .cases .mid{ background:var(--accent-quiet); }
   .cases thead .mid{ color:var(--accent); }
+  .summary{ display:grid; grid-template-columns:repeat(3,1fr); }
+  .summary div{ min-width:0; }
 </style>
 </head>
 <body>
@@ -107,16 +109,6 @@ $mid = $calc['cases']['mid'];
   </div>
 </div>
 
-<h3>Summary</h3>
-<div class="summary">
-  <div>Revenue / mo (realistic)<strong><?= $f0($mid['revenue']) ?></strong></div>
-  <div>Break-even<strong><?= $mid['break_even'] !== null ? number_format($mid['break_even'], 1) . ' mo' : '—' ?></strong></div>
-  <div class="hero">Monthly profit (realistic)<strong><?= $f0($mid['profit']) ?></strong></div>
-</div>
-<?php if ($mid['break_even'] !== null && (float)$s['funded_amount'] > 0): ?>
-  <p class="muted">Break-even on the NGO's own share (<?= $f0($calc['net_startup']) ?> TZS). Without partner funding the full start-up would recover in <?= number_format($mid['break_even_unfunded'], 1) ?> months.</p>
-<?php endif; ?>
-
 <h3>The three cases — per month</h3>
 <table class="cases">
   <thead><tr><th>Per month</th><th class="r">Pessimistic</th><th class="r mid">Realistic</th><th class="r">Optimistic</th></tr></thead>
@@ -144,6 +136,16 @@ $mid = $calc['cases']['mid'];
     </tr>
   </tbody>
 </table>
+
+<h3>Result — realistic case</h3>
+<div class="summary">
+  <div>Revenue / mo (realistic)<strong><?= $f0($mid['revenue']) ?></strong></div>
+  <div>Break-even<strong><?= $mid['break_even'] !== null ? number_format($mid['break_even'], 1) . ' mo' : '—' ?></strong></div>
+  <div class="hero">Monthly profit (realistic)<strong><?= $f0($mid['profit']) ?></strong></div>
+</div>
+<?php if ($mid['break_even'] !== null && (float)$s['funded_amount'] > 0): ?>
+  <p class="muted">Break-even on the NGO's own share (<?= $f0($calc['net_startup']) ?> TZS). Without partner funding the full start-up would recover in <?= number_format($mid['break_even_unfunded'], 1) ?> months.</p>
+<?php endif; ?>
 
 <?php if (!empty($calc['allocations'])): ?>
 <h3>What the profit pays for — realistic case</h3>
