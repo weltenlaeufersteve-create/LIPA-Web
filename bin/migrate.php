@@ -140,6 +140,11 @@ if (!columnExists($pdo, 'budget_products', 'batch_yield')) {
     echo "budget_products.batch_yield added\n";
 } else { echo "budget_products.batch_yield exists\n"; }
 
+if (!columnExists($pdo, 'budget_scenarios', 'include_first_batch')) {
+    $pdo->exec('ALTER TABLE budget_scenarios ADD COLUMN include_first_batch TINYINT(1) NOT NULL DEFAULT 0 AFTER funded_amount');
+    echo "budget_scenarios.include_first_batch added\n";
+} else { echo "budget_scenarios.include_first_batch exists\n"; }
+
 $pdo->exec("CREATE TABLE IF NOT EXISTS budget_product_materials (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id INT NOT NULL,

@@ -12,18 +12,20 @@ final class BudgetScenario
     public static function create(array $d): int
     {
         $pdo = Database::pdo();
-        $st = $pdo->prepare('INSERT INTO budget_scenarios (name, description, project_id, status, funded_amount, created_by, created_at, updated_at)
-            VALUES (:n,:d,:p,:s,:f,:u,NOW(),NOW())');
+        $st = $pdo->prepare('INSERT INTO budget_scenarios (name, description, project_id, status, funded_amount, include_first_batch, created_by, created_at, updated_at)
+            VALUES (:n,:d,:p,:s,:f,:fb,:u,NOW(),NOW())');
         $st->execute([':n'=>$d['name'], ':d'=>$d['description'] ?: null, ':p'=>$d['project_id'] ?: null,
-            ':s'=>$d['status'] ?? 'draft', ':f'=>self::n($d['funded_amount'] ?? 0), ':u'=>$d['created_by'] ?: null]);
+            ':s'=>$d['status'] ?? 'draft', ':f'=>self::n($d['funded_amount'] ?? 0),
+            ':fb'=>!empty($d['include_first_batch']) ? 1 : 0, ':u'=>$d['created_by'] ?: null]);
         return (int)$pdo->lastInsertId();
     }
 
     public static function update(int $id, array $d): void
     {
-        $st = Database::pdo()->prepare('UPDATE budget_scenarios SET name=:n, description=:d, project_id=:p, status=:s, funded_amount=:f, updated_at=NOW() WHERE id=:id');
+        $st = Database::pdo()->prepare('UPDATE budget_scenarios SET name=:n, description=:d, project_id=:p, status=:s, funded_amount=:f, include_first_batch=:fb, updated_at=NOW() WHERE id=:id');
         $st->execute([':n'=>$d['name'], ':d'=>$d['description'] ?: null, ':p'=>$d['project_id'] ?: null,
-            ':s'=>$d['status'] ?? 'draft', ':f'=>self::n($d['funded_amount'] ?? 0), ':id'=>$id]);
+            ':s'=>$d['status'] ?? 'draft', ':f'=>self::n($d['funded_amount'] ?? 0),
+            ':fb'=>!empty($d['include_first_batch']) ? 1 : 0, ':id'=>$id]);
     }
 
     public static function find(int $id): ?array

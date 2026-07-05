@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS budget_scenarios (
   project_id INT NULL,
   status ENUM('draft','active','archived') NOT NULL DEFAULT 'draft',
   funded_amount DECIMAL(15,2) NOT NULL DEFAULT 0,
+  include_first_batch TINYINT(1) NOT NULL DEFAULT 0,
   created_by INT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -59,6 +59,13 @@ $midcol  = 'style="background:var(--accent-quiet)"';
         </tbody>
         <tfoot>
           <tr><td>Total start-up</td><td class="r money" id="r-onetime">—</td><td></td></tr>
+          <tr id="row-firstbatch">
+            <td><label class="seed-toggle" style="display:flex;align-items:center;gap:8px;cursor:pointer;justify-content:flex-start">
+              <input type="checkbox" name="include_first_batch" value="1" <?= ($isNew || !empty($sc['include_first_batch'])) ? 'checked' : '' ?> <?= $ro ?>>
+              <span>Also cover the first batch of materials</span>
+            </label></td>
+            <td class="r money" id="r-firstbatch">—</td><td></td>
+          </tr>
           <tr><td>− Funded by partner</td><td class="r"><input class="bnum r" name="funded_amount" inputmode="numeric" value="<?= (float)($sc['funded_amount'] ?? 0) ?>" <?= $ro ?>></td><td></td></tr>
           <tr><td><b>= NGO share to recover</b></td><td class="r money" id="r-netstartup" style="color:var(--accent)">—</td><td></td></tr>
         </tfoot>

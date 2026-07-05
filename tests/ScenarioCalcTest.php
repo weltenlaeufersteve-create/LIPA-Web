@@ -47,6 +47,28 @@ final class ScenarioCalcTest extends TestCase
         $this->assertSame(25, $r['cases']['mid']['units_total']);  // 20 bowls + 5 vases
     }
 
+    public function test_first_batch_seed_added_to_startup_only_when_enabled(): void
+    {
+        // unit_cost 950 × batch_yield 100 = 95,000 per batch
+        $p = [['name'=>'Bar','unit_name'=>'bar','sale_price'=>2500,'unit_cost'=>950,'batch_yield'=>100,
+               'units_low'=>150,'units_mid'=>300,'units_high'=>500]];
+        $items = [['item_type'=>'one_time','amount'=>800000], ['item_type'=>'monthly_fixed','amount'=>200000]];
+
+        $off = ScenarioCalc::compute(['funded_amount'=>0, 'include_first_batch'=>0], $p, $items, []);
+        $this->assertSame(95000.0, $off['first_batch_total']);   // always computed for display
+        $this->assertFalse($off['first_batch_included']);
+        $this->assertSame(800000.0, $off['one_time_total']);     // equipment only
+        $this->assertSame(800000.0, $off['net_startup']);
+
+        $on = ScenarioCalc::compute(['funded_amount'=>0, 'include_first_batch'=>1], $p, $items, []);
+        $this->assertTrue($on['first_batch_included']);
+        $this->assertSame(800000.0, $on['one_time_total']);      // Total start-up unchanged (equipment)
+        $this->assertSame(895000.0, $on['net_startup']);         // 800k − 0 funded + 95k seed
+        // profit unchanged (seed is one-time, not recurring): 300*(2500-950)-200k = 265,000
+        $this->assertSame(265000.0, $on['cases']['mid']['profit']);
+        $this->assertSame($off['cases']['mid']['profit'], $on['cases']['mid']['profit']);
+    }
+
     public function test_negative_margin_flagged(): void
     {
         $p = [['name'=>'X','unit_name'=>'unit','sale_price'=>1000,'unit_cost'=>1500,'units_low'=>1,'units_mid'=>1,'units_high'=>1]];

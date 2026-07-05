@@ -53,6 +53,9 @@ $mid = $calc['cases']['mid'];
           <tr><td><?= e($it['name']) ?></td><td class="r num"><?= $f0($it['amount']) ?></td></tr>
         <?php endforeach; ?>
         <tr class="total-row"><td>Total start-up</td><td class="r num"><?= $f0($calc['one_time_total']) ?></td></tr>
+        <?php if (!empty($calc['first_batch_included'])): ?>
+          <tr><td>+ First batch of materials <span class="muted">(seed)</span></td><td class="r num"><?= $f0($calc['first_batch_total']) ?></td></tr>
+        <?php endif; ?>
         <tr><td class="muted">− Funded by partner</td><td class="r num"><?= $f0($s['funded_amount']) ?></td></tr>
         <tr><td><strong>= NGO share to recover</strong></td><td class="r num" style="color:var(--accent);font-weight:700"><?= $f0($calc['net_startup']) ?></td></tr>
       </tbody>

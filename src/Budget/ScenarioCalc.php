@@ -14,10 +14,21 @@ final class ScenarioCalc
         $sum = static fn(array $rows, string $type) => array_sum(array_map(
             static fn($i) => ($i['item_type'] ?? '') === $type ? (float)$i['amount'] : 0.0, $rows));
 
-        $oneTime = $sum($items, 'one_time');
-        $fixed   = $sum($items, 'monthly_fixed');
-        $funded  = (float)($scenario['funded_amount'] ?? 0);
-        $net     = max($oneTime - $funded, 0.0);
+        // Seed money for the first batch of each product = Σ (unit cost × batch yield).
+        // One-time working capital added to the NGO's own share after partner funding;
+        // never a recurring cost (the recurring batches live in variable costs).
+        $firstBatch = 0.0;
+        foreach ($products as $p) {
+            $firstBatch += (float)($p['unit_cost'] ?? 0) * max((int)($p['batch_yield'] ?? 1), 1);
+        }
+        $seedIncluded = !empty($scenario['include_first_batch']);
+        $seed         = $seedIncluded ? $firstBatch : 0.0;
+
+        $oneTime     = $sum($items, 'one_time');   // equipment / one-off items only
+        $fixed       = $sum($items, 'monthly_fixed');
+        $funded      = (float)($scenario['funded_amount'] ?? 0);
+        $fullStartup = $oneTime + $seed;           // total the venture must fund up front
+        $net         = max($fullStartup - $funded, 0.0);
 
         $totals = [];
         foreach (['low', 'mid', 'high'] as $k) {
@@ -54,7 +65,7 @@ final class ScenarioCalc
                 'fixed'=>$r2($fixed),
                 'profit'=>$r2($profit),
                 'break_even'=>$profit > 0 ? $r2($net / $profit) : null,
-                'break_even_unfunded'=>$profit > 0 ? $r2($oneTime / $profit) : null,
+                'break_even_unfunded'=>$profit > 0 ? $r2($fullStartup / $profit) : null,
             ];
         }
 
@@ -80,6 +91,7 @@ final class ScenarioCalc
 
         return [
             'one_time_total'=>$r2($oneTime), 'net_startup'=>$r2($net), 'fixed_total'=>$r2($fixed),
+            'first_batch_total'=>$r2($firstBatch), 'first_batch_included'=>$seedIncluded,
             'products'=>$prodOut, 'cases'=>$caseOut,
             'allocations'=>$allocOut, 'alloc_leftover'=>$leftover, 'alloc_note'=>$note,
         ];

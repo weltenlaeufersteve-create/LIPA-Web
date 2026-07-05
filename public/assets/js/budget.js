@@ -14,10 +14,12 @@
 
   function recompute() {
     var totRev = { low: 0, mid: 0, high: 0 }, totVar = { low: 0, mid: 0, high: 0 }, totUnits = { low: 0, mid: 0, high: 0 };
+    var seedTotal = 0; // Σ one batch of each product (materials cost per batch)
 
     all(document, '#products .bcard').forEach(function (card) {
       var batch = 0;
       all(card, '.bmat tbody [name^="p_mat_amount"]').forEach(function (inp) { batch += num(inp); });
+      seedTotal += batch;
       var yield_ = Math.max(num(card.querySelector('[name="p_yield[]"]')), 1);
       var unitCost = batch / yield_;
       var price = num(card.querySelector('[name="p_price[]"]'));
@@ -40,8 +42,14 @@
 
     var oneTime = 0; rowsOf('tbl-onetime').forEach(function (tr) { oneTime += num(tr.querySelector('[name="ot_amount[]"]')); });
     var fixed = 0;   rowsOf('tbl-fixed').forEach(function (tr) { fixed += num(tr.querySelector('[name="mf_amount[]"]')); });
+    // first-batch seed: added to the NGO share (after funding) when the toggle is on.
+    // Preview the amount muted when off so you can see what ticking it would add.
+    var seedBox = form.querySelector('[name="include_first_batch"]');
+    var seedOn = !!(seedBox && seedBox.checked);
+    var fbEl = document.getElementById('r-firstbatch');
+    if (fbEl) fbEl.textContent = f0(seedTotal);
     var funded = num(form.querySelector('[name="funded_amount"]'));
-    var net = Math.max(oneTime - funded, 0);
+    var net = Math.max(oneTime - funded + (seedOn ? seedTotal : 0), 0);
     setText('r-onetime', f0(oneTime));
     setText('r-netstartup', f0(net));
     setText('r-fixed', f0(fixed));
@@ -160,6 +168,7 @@
   });
 
   form.addEventListener('input', recompute);
+  form.addEventListener('change', recompute); // checkboxes (first-batch toggle)
   all(document, '#budget-form .bnum').forEach(function (el) { if (el.value !== '') fmtField(el); });
   recompute();
 })();

@@ -95,7 +95,7 @@ final class BudgetController
             'project_id'=>$in['project_id'] ?? null,
             'status'=>in_array($in['status'] ?? '', ['draft','active','archived'], true) ? $in['status'] : 'draft',
             'funded_amount'=>$in['funded_amount'] ?? 0, // sanitised (comma-stripped) in the model
-
+            'include_first_batch'=>!empty($in['include_first_batch']),
         ];
     }
 
