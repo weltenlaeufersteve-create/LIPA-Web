@@ -113,6 +113,17 @@
       recompute();
       return;
     }
+    // add a row to a standalone table (start-up / fixed / allocations)
+    if (e.target.closest('[data-add-row]')) {
+      var tblId = e.target.closest('[data-add-row]').getAttribute('data-add-row');
+      var body = document.querySelector('#' + tblId + ' tbody');
+      if (body) {
+        var brows = body.querySelectorAll('tr.brow');
+        body.appendChild(cloneCleared(brows[brows.length - 1]));
+        recompute();
+      }
+      return;
+    }
     // remove a whole product card
     if (e.target.closest('[data-card-remove]')) {
       var card = e.target.closest('.bcard');
