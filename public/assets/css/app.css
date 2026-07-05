@@ -275,6 +275,8 @@ a{ color:var(--accent); }
 .bcard-head [data-card-remove]{ margin-left:10px; }
 .bcard-body{ padding:4px 16px 16px; border-top:1px solid var(--line-soft); }
 .bcard.collapsed .bcard-body{ display:none; }
+/* materials table goes flush to the card edges like every other table */
+#budget-form .bcard-body .table-scroll{ margin-left:-16px; margin-right:-16px; }
 
 /* Upload progress overlay (activity Save) */
 .upload-overlay{ position:fixed; inset:0; z-index:250; display:grid; place-items:center; background:rgba(0,0,0,.4); padding:20px; }
