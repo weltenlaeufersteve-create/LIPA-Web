@@ -85,7 +85,7 @@ $svg = static function (string $p): string {
         <div class="nav-sep"></div>
         <div class="nav-group">
           <a class="nav-item<?= $navActive('/reports') ?>" href="/reports"><?= $svg($ic['reports']) ?>Reports</a>
-          <a class="nav-item<?= $navActive('/budget') ?>" href="/budget"><?= $svg($ic['budget']) ?>Budget</a>
+          <a class="nav-item<?= $navActive('/budget') ?>" href="/budget"><?= $svg($ic['budget']) ?>Budgets</a>
         </div>
       </nav>
 

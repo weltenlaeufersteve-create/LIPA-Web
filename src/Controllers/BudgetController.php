@@ -19,7 +19,7 @@ final class BudgetController
             $calc = ScenarioCalc::compute($s, $products, BudgetScenario::items($id), BudgetScenario::allocations($id));
             $rows[] = ['s'=>$s, 'products'=>count($products), 'calc'=>$calc];
         }
-        return render('budget/index', ['rows'=>$rows], 'Budget');
+        return render('budget/index', ['rows'=>$rows], 'Budgets');
     }
 
     public function create(): string
