@@ -46,6 +46,18 @@ final class OrgStatementTest extends DatabaseTestCase
         $this->assertEqualsWithDelta(500.0, $d['balances'][0]['balance'], 0.001);
     }
 
+    public function test_build_exposes_income_by_donor(): void
+    {
+        $acc = Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
+        $donor = \App\Models\Contact::create(['type'=>'donor','name'=>'Global Fund','email'=>'','phone'=>'','address'=>'','notes'=>'']);
+        $pdo = Database::pdo();
+        $pdo->exec("INSERT INTO income (date,account_id,contact_id,currency,amount_original,exchange_rate,amount_tzs) VALUES ('2026-02-10',$acc,$donor,'TZS',800,1,800)");
+
+        $d = OrgStatement::build('2026-02-01', '2026-02-28');
+        $this->assertSame('Global Fund', $d['income_by_donor'][0]['name']);
+        $this->assertEqualsWithDelta(800.0, (float)$d['income_by_donor'][0]['total'], 0.001);
+    }
+
     public function test_build_exposes_receipt_appendix_keys(): void
     {
         $acc = Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);

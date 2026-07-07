@@ -74,6 +74,17 @@
   </tbody>
 </table>
 
+<h3>Income by donor</h3>
+<table>
+  <thead><tr><th>Donor</th><th class="num">Amount (TZS)</th></tr></thead>
+  <tbody>
+  <?php foreach ($d['income_by_donor'] as $r): ?>
+    <tr><td><?= e($r['name'] ?? '(no donor)') ?></td><td class="num"><?= number_format((float)$r['total'], 2) ?></td></tr>
+  <?php endforeach; ?>
+  <?php if (empty($d['income_by_donor'])): ?><tr><td colspan="2">None in this period.</td></tr><?php endif; ?>
+  </tbody>
+</table>
+
 <h3>Balances by account (as at <?= e($d['to']) ?>)</h3>
 <table>
   <thead><tr><th>Account</th><th class="num">Balance (TZS)</th></tr></thead>

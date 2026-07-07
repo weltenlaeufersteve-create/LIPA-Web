@@ -127,6 +127,18 @@ final class Income
         return $stmt->fetchAll();
     }
 
+    /** Income grouped by donor (contact). Rows with no contact bucket under NULL name. */
+    public static function byDonor(array $filters = []): array
+    {
+        [$where, $params] = self::whereClause($filters);
+        $sql = 'SELECT c.id AS id, c.name AS name, COALESCE(SUM(i.amount_tzs),0) AS total
+                FROM income i LEFT JOIN contacts c ON c.id = i.contact_id
+                ' . $where . ' GROUP BY i.contact_id, c.id, c.name ORDER BY total DESC';
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public static function delete(int $id): void
     {
         $stmt = Database::pdo()->prepare('DELETE FROM income WHERE id = :id');

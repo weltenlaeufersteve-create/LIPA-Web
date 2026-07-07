@@ -44,6 +44,7 @@ final class OrgStatement
             'net'      => round($income - $expenses, 2),
             'closing'  => round($closing, 2),
             'income_by_category'  => Income::byCategory($period),
+            'income_by_donor'     => Income::byDonor($period),
             'expense_by_category' => Expense::byCategory($period),
             'by_project' => $byProject,
             'balances'   => $balances,

@@ -80,6 +80,24 @@ $walletIco = '<span class="acct-ico"><svg viewBox="0 0 24 24" fill="none" stroke
   </div>
 </div>
 
+<h2 class="section-title">Income by donor</h2>
+<div class="card table-card">
+  <div class="table-scroll">
+  <table class="ledger">
+    <thead><tr><th>Donor</th><th class="r">Amount (TZS)</th></tr></thead>
+    <tbody>
+      <?php foreach ($incomeByDonor as $row): ?>
+        <tr>
+          <td class="name"><?= e($row['name'] ?? '(no donor)') ?></td>
+          <td class="r money" style="color:var(--pos)"><?= number_format((float)$row['total'], 2) ?></td>
+        </tr>
+      <?php endforeach; ?>
+      <?php if (empty($incomeByDonor)): ?><tr><td colspan="2" class="muted-cell">No income for this period.</td></tr><?php endif; ?>
+    </tbody>
+  </table>
+  </div>
+</div>
+
 <h2 class="section-title">Expenses by category</h2>
 <div class="card table-card">
   <table class="ledger">
