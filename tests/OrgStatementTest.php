@@ -45,4 +45,21 @@ final class OrgStatementTest extends DatabaseTestCase
         $this->assertSame('Bank', $d['balances'][0]['name']);
         $this->assertEqualsWithDelta(500.0, $d['balances'][0]['balance'], 0.001);
     }
+
+    public function test_build_exposes_receipt_appendix_keys(): void
+    {
+        $acc = Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
+        $pid = Project::create(['name'=>'Water','code'=>'','description'=>'']);
+        $pdo = Database::pdo();
+        // one image receipt, one pdf receipt, one without receipt — all in period
+        $pdo->exec("INSERT INTO expenses (date,account_id,project_id,amount_tzs,receipt_path) VALUES ('2026-02-05',$acc,$pid,100,'expense_a.jpg')");
+        $pdo->exec("INSERT INTO expenses (date,account_id,project_id,amount_tzs,receipt_path) VALUES ('2026-02-06',$acc,$pid,200,'expense_b.pdf')");
+        $pdo->exec("INSERT INTO expenses (date,account_id,project_id,amount_tzs) VALUES ('2026-02-07',$acc,$pid,300)");
+
+        $d = OrgStatement::build('2026-02-01', '2026-02-28');
+        $this->assertCount(1, $d['receipt_images']);
+        $this->assertCount(1, $d['receipt_pdfs']);
+        $this->assertSame('expense_a.jpg', $d['receipt_images'][0]['receipt_path']);
+        $this->assertSame('expense_b.pdf', $d['receipt_pdfs'][0]['receipt_path']);
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Reports;
 use App\Models\Income;
 use App\Models\Expense;
 use App\Models\Project;
+use App\Reports\ReceiptAppendix;
 
 final class ProjectStatement
 {
@@ -18,6 +19,9 @@ final class ProjectStatement
         $received = round(Income::totalTzs($period), 2);
         $spent    = round(Expense::totalTzs($period), 2);
 
+        $expenseLines = Expense::all($period);
+        $appendix = ReceiptAppendix::fromExpenses($expenseLines);
+
         return [
             'project'  => $project,
             'from'     => $from,
@@ -28,7 +32,9 @@ final class ProjectStatement
             'closing'  => round($opening + $received - $spent, 2),
             'income_lines'        => Income::all($period),
             'expense_by_category' => Expense::byCategory($period),
-            'expense_lines'       => Expense::all($period),
+            'expense_lines'       => $expenseLines,
+            'receipt_images' => $appendix['images'],
+            'receipt_pdfs'   => $appendix['pdfs'],
         ];
     }
 }

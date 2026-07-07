@@ -4,6 +4,7 @@ namespace App\Reports;
 use App\Models\Income;
 use App\Models\Expense;
 use App\Models\Account;
+use App\Reports\ReceiptAppendix;
 
 final class OrgStatement
 {
@@ -33,6 +34,8 @@ final class OrgStatement
             $byProject[] = ['name' => $name, 'income' => $inc, 'expense' => $exp, 'balance' => $inc - $exp];
         }
 
+        $appendix = ReceiptAppendix::fromExpenses(Expense::all($period));
+
         return [
             'from' => $from, 'to' => $to,
             'opening'  => round($opening, 2),
@@ -44,6 +47,8 @@ final class OrgStatement
             'expense_by_category' => Expense::byCategory($period),
             'by_project' => $byProject,
             'balances'   => $balances,
+            'receipt_images' => $appendix['images'],
+            'receipt_pdfs'   => $appendix['pdfs'],
         ];
     }
 }
