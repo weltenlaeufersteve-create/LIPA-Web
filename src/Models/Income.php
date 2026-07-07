@@ -127,13 +127,16 @@ final class Income
         return $stmt->fetchAll();
     }
 
-    /** Income grouped by donor (contact). Rows with no contact bucket under NULL name. */
+    /**
+     * Income grouped by donor. Only counts income linked to an actual donor contact
+     * (contacts.type = 'donor'); non-donor income (no contact, e.g. bank interest) is excluded.
+     */
     public static function byDonor(array $filters = []): array
     {
         [$where, $params] = self::whereClause($filters);
-        $sql = 'SELECT c.id AS id, c.name AS name, COALESCE(SUM(i.amount_tzs),0) AS total
-                FROM income i LEFT JOIN contacts c ON c.id = i.contact_id
-                ' . $where . ' GROUP BY i.contact_id, c.id, c.name ORDER BY total DESC';
+        $sql = "SELECT c.id AS id, c.name AS name, COALESCE(SUM(i.amount_tzs),0) AS total
+                FROM income i INNER JOIN contacts c ON c.id = i.contact_id AND c.type = 'donor'
+                " . $where . ' GROUP BY i.contact_id, c.id, c.name ORDER BY total DESC';
         $stmt = Database::pdo()->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();

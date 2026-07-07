@@ -88,7 +88,7 @@ $walletIco = '<span class="acct-ico"><svg viewBox="0 0 24 24" fill="none" stroke
     <tbody>
       <?php foreach ($incomeByDonor as $row): ?>
         <tr>
-          <td class="name"><?= e($row['name'] ?? '(no donor)') ?></td>
+          <td class="name"><?= e($row['name']) ?></td>
           <td class="r money" style="color:var(--pos)"><?= number_format((float)$row['total'], 2) ?></td>
         </tr>
       <?php endforeach; ?>

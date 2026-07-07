@@ -79,7 +79,7 @@
   <thead><tr><th>Donor</th><th class="num">Amount (TZS)</th></tr></thead>
   <tbody>
   <?php foreach ($d['income_by_donor'] as $r): ?>
-    <tr><td><?= e($r['name'] ?? '(no donor)') ?></td><td class="num"><?= number_format((float)$r['total'], 2) ?></td></tr>
+    <tr><td><?= e($r['name']) ?></td><td class="num"><?= number_format((float)$r['total'], 2) ?></td></tr>
   <?php endforeach; ?>
   <?php if (empty($d['income_by_donor'])): ?><tr><td colspan="2">None in this period.</td></tr><?php endif; ?>
   </tbody>
