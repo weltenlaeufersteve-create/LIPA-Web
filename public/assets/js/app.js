@@ -265,3 +265,24 @@ document.addEventListener('submit', (e) => {
   const msg = e.target.getAttribute('data-confirm');
   if (msg && !window.confirm(msg)) { e.preventDefault(); }
 });
+
+// Guard against duplicate submissions. A rapid double-click — or an impatient second
+// click while a slow save (e.g. with a receipt upload) is still in flight — otherwise
+// fires two POSTs before the redirect returns, creating duplicate records (the CSRF
+// token is reusable and PRG only stops refresh-resubmits). Block any second submit of
+// the same POST form and disable its submit buttons. Registered after the confirm
+// handler above, so a cancelled confirm (defaultPrevented) is left untouched. GET forms
+// (filters, report openers in a new tab) are intentionally not touched.
+document.addEventListener('submit', (e) => {
+  const form = e.target;
+  if (e.defaultPrevented) return;
+  if ((form.getAttribute('method') || '').toLowerCase() !== 'post') return;
+  if (form.id === 'activity-form') return; // has its own XHR/overlay submit path
+  if (form.dataset.submitting) { e.preventDefault(); return; }
+  form.dataset.submitting = '1';
+  // Defer disabling so the clicked button's name/value is still sent with this POST.
+  setTimeout(() => {
+    form.querySelectorAll('button[type="submit"], button:not([type]), input[type="submit"]')
+      .forEach((b) => { b.disabled = true; b.setAttribute('aria-busy', 'true'); });
+  }, 0);
+});
