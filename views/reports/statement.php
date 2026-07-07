@@ -83,6 +83,40 @@
   </tbody>
 </table>
 
+<?php if (!empty($d['receipt_images'])): ?>
+<section class="receipt-appendix">
+  <h3>Appendix — receipt photos</h3>
+  <div class="receipt-grid">
+    <?php foreach ($d['receipt_images'] as $r): ?>
+      <figure class="receipt-fig">
+        <figcaption><?= e($r['date']) ?> &middot; <?= e($r['contact_name'] ?? '') ?> &middot; <?= e($r['category_name'] ?? '') ?> &middot; <?= number_format((float)$r['amount_tzs'], 2) ?> TZS</figcaption>
+        <img src="/expenses/<?= (int)$r['id'] ?>/receipt" alt="Receipt <?= e($r['date']) ?>">
+      </figure>
+    <?php endforeach; ?>
+  </div>
+</section>
+<?php endif; ?>
+
+<?php if (!empty($d['receipt_pdfs'])): ?>
+<section class="receipt-pdf-list">
+  <h3>Appendix — PDF receipts on file</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Vendor</th><th>Category</th><th class="num">Amount (TZS)</th><th>Receipt</th></tr></thead>
+    <tbody>
+    <?php foreach ($d['receipt_pdfs'] as $r): ?>
+      <tr>
+        <td><?= e($r['date']) ?></td>
+        <td><?= e($r['contact_name'] ?? '') ?></td>
+        <td><?= e($r['category_name'] ?? '') ?></td>
+        <td class="num"><?= number_format((float)$r['amount_tzs'], 2) ?></td>
+        <td><a href="/expenses/<?= (int)$r['id'] ?>/receipt">view</a></td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+</section>
+<?php endif; ?>
+
 <p class="muted">Generated <?= date('Y-m-d H:i') ?> &middot; LIPA</p>
 </body>
 </html>
