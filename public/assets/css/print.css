@@ -36,7 +36,7 @@ thead th{ background:var(--surface-2); color:var(--faint); text-transform:upperc
 .activity{ border-top:2px solid var(--line); padding-top:12px; margin-top:18px; }
 
 /* Receipt appendix (statements) */
-.receipt-appendix{ break-before:page; page-break-before:always; }
+.receipt-appendix{ break-before:page; page-break-before:always; margin-top:40px; }
 .receipt-appendix h3, .receipt-pdf-list h3{ margin-top:0; }
 .receipt-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:8px 0; }
 .receipt-grid .receipt-fig{ margin:0; break-inside:avoid; page-break-inside:avoid; border:1px solid var(--line); padding:8px; border-radius:8px; }
