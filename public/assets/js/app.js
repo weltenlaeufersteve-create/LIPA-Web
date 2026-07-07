@@ -38,13 +38,15 @@ document.addEventListener('click', (e) => {
   else if (e.target.classList.contains('scrim')) { shell.classList.remove('nav-open'); }
 });
 
-// Click a column header to sort a .data-table (client-side). Numbers sort
+// Click a column header to sort a list .ledger table (client-side). Numbers sort
 // numerically (commas stripped); everything else (incl. YYYY-MM-DD dates) sorts as text.
+// Editable .ledger tables (budget/activity forms) live inside a <form> and are skipped,
+// so their input rows are never reordered.
 document.addEventListener('click', function (e) {
   var th = e.target.closest('th');
   if (!th) return;
-  var table = th.closest('table.data-table');
-  if (!table || !table.tBodies[0]) return;
+  var table = th.closest('table.ledger');
+  if (!table || table.closest('form') || !table.tBodies[0]) return;
   var headerCells = Array.prototype.slice.call(th.parentNode.children);
   var idx = headerCells.indexOf(th);
   if (idx < 0 || th.textContent.trim() === '') return; // skip the actions column

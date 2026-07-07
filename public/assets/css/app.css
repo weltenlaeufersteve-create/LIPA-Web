@@ -116,6 +116,11 @@ a{ color:var(--accent); }
 .ledger thead th{ text-align:left; font-size:11px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
   color:var(--faint); padding:12px 20px; border-bottom:1px solid var(--line); background:var(--surface-2); white-space:nowrap; }
 .ledger thead th.r,.ledger td.r{ text-align:right; }
+/* Sortable list-table headers (editable form tables are excluded in app.js). */
+.ledger thead th:not(:empty){ cursor:pointer; user-select:none; }
+form .ledger thead th{ cursor:default; user-select:auto; }
+.ledger thead th[data-sort=asc]::after{ content:" \25B2"; font-size:8px; opacity:.7; }
+.ledger thead th[data-sort=desc]::after{ content:" \25BC"; font-size:8px; opacity:.7; }
 .ledger tbody td{ padding:15px 20px; border-bottom:1px solid var(--line-soft); }
 .ledger tbody tr:last-child td{ border-bottom:none; }
 .ledger tbody tr{ transition:background .12s; }
