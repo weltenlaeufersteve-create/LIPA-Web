@@ -103,6 +103,7 @@ $router->add('GET', '/reports/export', fn() => (new ReportController())->export(
 $router->add('GET', '/reports/statement', fn() => (new ReportController())->statement());
 $router->add('GET', '/reports/org-statement', fn() => (new ReportController())->orgStatement());
 $router->add('GET', '/reports/activity-report', fn() => (new ReportController())->activityReport());
+$router->add('GET', '/reports/sankey', fn() => (new ReportController())->sankey());
 
 // Budget scenarios (planning layer — never touches the cashbook)
 $router->add('GET',  '/budget',            fn() => (new BudgetController())->index());

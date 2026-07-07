@@ -70,6 +70,21 @@ final class ReportController
         return ob_get_clean();
     }
 
+    public function sankey(): string
+    {
+        Auth::requireRole('admin');
+        $from = $_GET['date_from'] ?? (date('Y') . '-01-01');
+        $to   = $_GET['date_to'] ?? (date('Y') . '-12-31');
+        if (!\DateTime::createFromFormat('Y-m-d', $from) || !\DateTime::createFromFormat('Y-m-d', $to)) {
+            return '<p style="font-family:sans-serif;padding:24px">Please choose valid dates. <a href="/reports">Back to Reports</a>.</p>';
+        }
+        $d = \App\Reports\MoneyFlow::build($from, $to);
+        $s = \App\Models\Setting::all();
+        ob_start();
+        include dirname(__DIR__, 2) . '/views/reports/sankey.php';
+        return ob_get_clean();
+    }
+
     public function activityReport(): string
     {
         Auth::requireRole('admin','editor','viewer');
