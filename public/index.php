@@ -90,6 +90,8 @@ $router->add('POST', '/expenses/:id/delete', fn($p) => (new ExpenseController())
 // Receipt downloads (authenticated, all roles)
 $router->add('GET', '/income/:id/receipt',   fn($p) => (new IncomeController())->receipt((int)$p['id']));
 $router->add('GET', '/expenses/:id/receipt', fn($p) => (new ExpenseController())->receipt((int)$p['id']));
+$router->add('GET', '/income/:id/receipt/print',   fn($p) => (new IncomeController())->receiptPrint((int)$p['id']));
+$router->add('GET', '/expenses/:id/receipt/print', fn($p) => (new ExpenseController())->receiptPrint((int)$p['id']));
 
 // Settings (admin)
 $router->add('GET',  '/settings', fn() => (new SettingController())->index());

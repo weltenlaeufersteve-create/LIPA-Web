@@ -45,4 +45,25 @@ final class ReceiptStorage
     {
         return self::DIR . '/' . basename($basename);
     }
+
+    /**
+     * Emit a print-ready response for a stored receipt.
+     * Images render a minimal page that auto-triggers the print dialog; PDFs redirect to the
+     * inline view so the browser's built-in PDF viewer handles printing.
+     */
+    public static function printResponse(string $basename, string $inlineUrl, string $title): void
+    {
+        if (self::extension($basename) === 'pdf') {
+            header('Location: ' . $inlineUrl); // browser's PDF viewer handles printing
+            return;
+        }
+        $t = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+        $u = htmlspecialchars($inlineUrl, ENT_QUOTES, 'UTF-8');
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+           . '<title>' . $t . '</title>'
+           . '<style>html,body{margin:0}img{display:block;max-width:100%;height:auto;margin:0 auto}'
+           . '@page{margin:10mm}</style></head>'
+           . '<body onload="window.print()"><img src="' . $u . '" alt="' . $t . '"></body></html>';
+    }
 }

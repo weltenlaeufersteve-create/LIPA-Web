@@ -131,4 +131,14 @@ final class ExpenseController
         header('Content-Disposition: inline; filename="' . basename($path) . '"');
         readfile($path); exit;
     }
+
+    public function receiptPrint(int $id): never
+    {
+        Auth::requireRole('admin','editor','viewer');
+        $row = Expense::find($id);
+        if (!$row || empty($row['receipt_path'])) { http_response_code(404); echo 'Not found'; exit; }
+        if (!is_file(\App\ReceiptStorage::path($row['receipt_path']))) { http_response_code(404); echo 'Not found'; exit; }
+        \App\ReceiptStorage::printResponse($row['receipt_path'], '/expenses/' . $id . '/receipt', 'Receipt — expense #' . $id);
+        exit;
+    }
 }

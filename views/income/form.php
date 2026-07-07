@@ -55,7 +55,7 @@
   <div class="form-field"><label>Reference</label><input name="reference" value="<?= e($r['reference'] ?? '') ?>"></div>
   <div class="form-field"><label>Notes</label><textarea name="notes"><?= e($r['notes'] ?? '') ?></textarea></div>
   <div class="form-field"><label>Receipt (PDF / JPG / PNG)</label><input type="file" name="receipt" accept=".pdf,.jpg,.jpeg,.png">
-    <?php if (!empty($r['receipt_path'])): ?><div class="form-hint">Current: <a href="/income/<?= (int)$r['id'] ?>/receipt">View receipt</a></div><?php endif; ?>
+    <?php if (!empty($r['receipt_path'])): ?><div class="form-hint">Current: <a href="/income/<?= (int)$r['id'] ?>/receipt">View receipt</a> &middot; <a href="/income/<?= (int)$r['id'] ?>/receipt/print" target="_blank">Print</a></div><?php endif; ?>
   </div>
   <div class="form-actions">
     <button type="submit" class="btn">Save</button>
