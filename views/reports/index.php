@@ -70,4 +70,20 @@
     </form>
   </div>
 
+  <?php if (\App\Auth::is('admin')): ?>
+  <div class="report-card">
+    <div class="rc-head">
+      <div class="rc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5v14"/><path d="M4 7h6a4 4 0 0 1 4 4 4 4 0 0 0 4 4h2"/><path d="M4 17h6a4 4 0 0 0 4-4"/><path d="M18 8l2-1-2-1"/><path d="M18 17l2-1-2-1"/></svg></div>
+      <div><div class="rc-title">Money flow (Sankey)</div><div class="rc-desc">Visual flow: income sources → accounts → expenses. Admin only.</div></div>
+    </div>
+    <form method="get" action="/reports/sankey" target="_blank" style="display:contents">
+      <div class="rc-fields">
+        <div class="field"><label>From</label><input type="date" name="date_from" value="<?= e($date_from) ?>"></div>
+        <div class="field"><label>To</label><input type="date" name="date_to" value="<?= e($date_to) ?>"></div>
+      </div>
+      <div class="rc-foot"><span class="rc-hint">Opens in a new tab</span><button class="btn" type="submit">Open Sankey</button></div>
+    </form>
+  </div>
+  <?php endif; ?>
+
 </div>
