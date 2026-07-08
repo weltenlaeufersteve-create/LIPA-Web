@@ -1,6 +1,9 @@
 /* LIPA money-flow Sankey renderer.
    Reads a {nodes,links} payload from #sankey-data and draws inline SVG into #sankey.
    Columns: 0 = income source, 1 = account, 2 = expense category.
+   Accounts that are fed by a transfer (e.g. Cash funded from Bank) get their own lane to the
+   right of the main accounts, so the transfer reads as a clean forward flow. Link endpoints are
+   ordered by the opposite node's position to minimise crossings.
    Ribbons: in = --pos (green), out = --neg (red), transfer = --flow-transfer (blue). */
 (function () {
   "use strict";
@@ -19,44 +22,69 @@
   var kindLabel = { "in": "Income", "out": "Expense", "transfer": "Transfer" };
 
   var NW = 15, TOP = 78, BOT = 560, HAV = BOT - TOP, PAD = 15;
-  var colX = { 0: 255, 1: 500, 2: 745 };
 
-  // node values
+  // node in/out sums & value
   nodes.forEach(function (n) { n.inSum = 0; n.outSum = 0; });
   links.forEach(function (l) { N[l.s].outSum += l.v; N[l.t].inSum += l.v; });
   nodes.forEach(function (n) { n.value = n.col === 0 ? n.outSum : n.col === 2 ? n.inSum : Math.max(n.inSum, n.outSum); });
 
-  var cols = { 0: [], 1: [], 2: [] };
-  nodes.forEach(function (n) { cols[n.col].push(n); });
-  // biggest first within a column reads tidiest
-  [0, 1, 2].forEach(function (c) { cols[c].sort(function (a, b) { return b.value - a.value; }); });
+  // lanes: income | accounts | (transfer-fed accounts) | expenses
+  var transferIn = {};
+  links.forEach(function (l) { if (l.kind === "transfer") transferIn[l.t] = (transferIn[l.t] || 0) + l.v; });
+  nodes.forEach(function (n) {
+    n.lane = n.col === 0 ? "income" : n.col === 2 ? "expense" : (transferIn[n.id] > 0 ? "down" : "acc");
+  });
+  var downUsed = nodes.some(function (n) { return n.lane === "down"; });
+  var W = downUsed ? 1050 : 1000;
+  var laneX = downUsed
+    ? { income: 245, acc: 455, down: 600, expense: 800 }
+    : { income: 255, acc: 500, expense: 745 };
+  var laneOrder = downUsed ? ["income", "acc", "down", "expense"] : ["income", "acc", "expense"];
+  host.setAttribute("viewBox", "0 0 " + W + " 600");
+
+  var lanes = {}; laneOrder.forEach(function (k) { lanes[k] = []; });
+  nodes.forEach(function (n) { lanes[n.lane].push(n); });
+  laneOrder.forEach(function (k) { lanes[k].sort(function (a, b) { return b.value - a.value; }); });
 
   var scale = Infinity;
-  [0, 1, 2].forEach(function (c) {
-    var sum = cols[c].reduce(function (a, n) { return a + n.value; }, 0);
-    var avail = HAV - Math.max(cols[c].length - 1, 0) * PAD;
+  laneOrder.forEach(function (k) {
+    var sum = lanes[k].reduce(function (a, n) { return a + n.value; }, 0);
+    var avail = HAV - Math.max(lanes[k].length - 1, 0) * PAD;
     if (sum > 0) scale = Math.min(scale, avail / sum);
   });
   if (!isFinite(scale) || scale <= 0) scale = 0.0001;
 
-  [0, 1, 2].forEach(function (c) {
-    var list = cols[c];
+  laneOrder.forEach(function (k) {
+    var list = lanes[k];
     var h = list.reduce(function (a, n) { return a + n.value * scale; }, 0) + Math.max(list.length - 1, 0) * PAD;
     var y = TOP + (HAV - h) / 2;
     list.forEach(function (n) {
       n.h = n.value * scale; n.y0 = y; n.y1 = y + n.h; y = n.y1 + PAD;
-      n.x1 = colX[c]; n.x2 = colX[c] + NW; n.inC = n.y0; n.outC = n.y0;
+      n.x1 = laneX[k]; n.x2 = laneX[k] + NW; n.yc = (n.y0 + n.y1) / 2;
     });
+  });
+
+  // order link endpoints by the opposite node's vertical centre (crossing reduction)
+  nodes.forEach(function (n) { n._out = []; n._in = []; });
+  links.forEach(function (l) { N[l.s]._out.push(l); N[l.t]._in.push(l); });
+  nodes.forEach(function (n) {
+    n._out.sort(function (a, b) { return N[a.t].yc - N[b.t].yc; });
+    var o = n.y0; n._out.forEach(function (l) { l._sy0 = o; o += l.v * scale; });
+    n._in.sort(function (a, b) { return N[a.s].yc - N[b.s].yc; });
+    var i = n.y0; n._in.forEach(function (l) { l._ty0 = i; i += l.v * scale; });
   });
 
   var SVGNS = "http://www.w3.org/2000/svg";
   function el(tag, a) { var e = document.createElementNS(SVGNS, tag); for (var k in a) e.setAttribute(k, a[k]); return e; }
 
-  // column headers (only where that column has nodes)
+  // column headers
   var heads = [];
-  if (cols[0].length) heads.push(["INCOME · SOURCE", colX[0] + NW, "end"]);
-  if (cols[1].length) heads.push(["ACCOUNTS", colX[1] + NW / 2, "middle"]);
-  if (cols[2].length) heads.push(["EXPENSES · CATEGORY", colX[2], "start"]);
+  if (lanes.income.length) heads.push(["INCOME · SOURCE", laneX.income + NW, "end"]);
+  if (lanes.acc.length) {
+    var accHeadX = downUsed ? (laneX.acc + laneX.down) / 2 + NW / 2 : laneX.acc + NW / 2;
+    heads.push(["ACCOUNTS", accHeadX, "middle"]);
+  }
+  if (lanes.expense.length) heads.push(["EXPENSES · CATEGORY", laneX.expense, "start"]);
   heads.forEach(function (h) {
     var t = el("text", { x: h[1], y: 42, "text-anchor": h[2], "class": "colhead" });
     t.textContent = h[0]; host.appendChild(t);
@@ -74,12 +102,11 @@
   }
 
   var ribbonEls = [];
-  var order = { "in": 0, "out": 1, "transfer": 2 };
-  links.slice().sort(function (a, b) { return order[a.kind] - order[b.kind]; }).forEach(function (l) {
+  // draw larger flows first so thin ones sit on top and stay hoverable
+  links.slice().sort(function (a, b) { return b.v - a.v; }).forEach(function (l) {
     var s = N[l.s], t = N[l.t], th = l.v * scale, rth = Math.max(th, 2.5);
-    var sy0 = s.outC; s.outC += th;
-    var ty0 = t.inC;  t.inC += th;
-    var sc = sy0 + th / 2, tc = ty0 + th / 2, bow = l.kind === "transfer" ? 55 : 0;
+    var sc = l._sy0 + th / 2, tc = l._ty0 + th / 2;
+    var bow = (t.x1 >= s.x2) ? 0 : 55;   // clean forward flow; only a same-lane/back flow bows
     var d = ribbonPath(s.x2, sc - rth / 2, sc + rth / 2, t.x1, tc - rth / 2, tc + rth / 2, bow);
     var p = el("path", { d: d, "class": "ribbon", fill: kindColor[l.kind], "fill-opacity": 0.44 });
     p.__l = l; host.appendChild(p); ribbonEls.push(p);
@@ -88,7 +115,7 @@
   // nodes + labels on top
   nodes.forEach(function (n) {
     host.appendChild(el("rect", { x: n.x1, y: n.y0, width: NW, height: Math.max(n.h, 2), rx: 2.5, "class": "node-rect" }));
-    var cy = (n.y0 + n.y1) / 2;
+    var cy = n.yc;
     if (n.col === 1) {
       var tt = el("text", { x: (n.x1 + n.x2) / 2, y: n.y0 - 8, "text-anchor": "middle", "class": "nlabel" });
       var a = el("tspan", {}); a.textContent = n.label + "  ";
