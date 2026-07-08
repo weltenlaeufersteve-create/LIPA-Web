@@ -127,6 +127,19 @@ final class Income
         return $stmt->fetchAll();
     }
 
+    /** Income received per account (money in). @return array<int,float> account_id => total */
+    public static function receivedByAccount(array $filters = []): array
+    {
+        [$where, $params] = self::whereClause($filters);
+        $sql = 'SELECT i.account_id AS id, COALESCE(SUM(i.amount_tzs),0) AS total
+                FROM income i ' . $where . ' GROUP BY i.account_id';
+        $stmt = Database::pdo()->prepare($sql);
+        $stmt->execute($params);
+        $out = [];
+        foreach ($stmt->fetchAll() as $r) { if ($r['id'] !== null) { $out[(int)$r['id']] = (float)$r['total']; } }
+        return $out;
+    }
+
     /**
      * Income grouped by donor. Only counts income linked to an actual donor contact
      * (contacts.type = 'donor'); non-donor income (no contact, e.g. bank interest) is excluded.

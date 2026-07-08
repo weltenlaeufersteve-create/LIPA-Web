@@ -7,6 +7,21 @@ use App\Database;
 
 final class IncomeByDonorTest extends DatabaseTestCase
 {
+    public function test_received_by_account_sums_income_per_account(): void
+    {
+        $bank = Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);
+        $cash = Account::create(['name'=>'Cash','type'=>'cash','opening_balance'=>0,'opening_balance_date'=>null]);
+        $pdo = Database::pdo();
+        $pdo->exec("INSERT INTO income (date,account_id,currency,amount_original,exchange_rate,amount_tzs) VALUES ('2026-02-05',$bank,'TZS',800,1,800)");
+        $pdo->exec("INSERT INTO income (date,account_id,currency,amount_original,exchange_rate,amount_tzs) VALUES ('2026-02-06',$bank,'TZS',200,1,200)");
+        // outside range — excluded
+        $pdo->exec("INSERT INTO income (date,account_id,currency,amount_original,exchange_rate,amount_tzs) VALUES ('2026-03-01',$bank,'TZS',999,1,999)");
+
+        $rec = Income::receivedByAccount(['date_from'=>'2026-02-01','date_to'=>'2026-02-28']);
+        $this->assertEqualsWithDelta(1000.0, (float)$rec[$bank], 0.001);
+        $this->assertArrayNotHasKey($cash, $rec); // no income into Cash
+    }
+
     public function test_lists_only_donor_contacts_desc_excluding_nondonor_income(): void
     {
         $acc = Account::create(['name'=>'Bank','type'=>'bank','opening_balance'=>0,'opening_balance_date'=>null]);

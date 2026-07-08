@@ -52,7 +52,7 @@ $walletIco = '<span class="acct-ico"><svg viewBox="0 0 24 24" fill="none" stroke
   <table class="ledger">
     <thead><tr><th>Account</th><th class="r">Received (TZS)</th><th class="r">Current balance (TZS)</th></tr></thead>
     <tbody>
-      <?php foreach ($balances as $b): $rec = $transfersIn[$b['id']] ?? 0; ?>
+      <?php foreach ($balances as $b): $rec = $received[$b['id']] ?? 0; ?>
         <tr><td class="name"><?= $walletIco ?><?= e($b['name']) ?></td>
           <td class="r money"><?= $rec > 0 ? number_format($rec, 2) : '<span class="muted-cell">—</span>' ?></td>
           <td class="r money"><?= number_format($b['balance'], 2) ?></td></tr>

@@ -27,8 +27,18 @@ final class DashboardController
             'projects'=>$proj,
             'incomeByDonor'=>Income::byDonor($f),
             'balances'=>\App\Models\Account::balancesAll(),
-            'transfersIn'=>\App\Models\Transfer::receivedByAccount($f),
+            'received'=>$this->receivedByAccount($f),
             'expenseByCategory'=>Expense::byCategory($f),
         ], 'Dashboard');
+    }
+
+    /** Money received into each account for the period: income plus transfers moved in. */
+    private function receivedByAccount(array $f): array
+    {
+        $received = Income::receivedByAccount($f);
+        foreach (\App\Models\Transfer::receivedByAccount($f) as $id => $amount) {
+            $received[$id] = ($received[$id] ?? 0) + $amount;
+        }
+        return $received;
     }
 }
