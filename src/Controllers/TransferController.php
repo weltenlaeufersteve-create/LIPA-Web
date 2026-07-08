@@ -12,7 +12,7 @@ final class TransferController
     {
         Auth::requireRole('admin','editor','viewer');
         $f = ['date_from'=>$_GET['date_from'] ?? '', 'date_to'=>$_GET['date_to'] ?? ''];
-        return render('transfers/index', ['rows'=>Transfer::all($f), 'f'=>$f], 'Transfers');
+        return render('transfers/index', ['rows'=>Transfer::all($f), 'f'=>$f, 'total'=>Transfer::totalTzs($f)], 'Transfers');
     }
 
     public function create(): string

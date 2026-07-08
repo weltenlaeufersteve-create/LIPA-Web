@@ -7,7 +7,7 @@
   </div>
 </form>
 <div class="row-between" style="margin-bottom:16px">
-  <span class="count">Money moved between accounts</span>
+  <div class="total-chip">Total transferred <b class="num">TZS <?= number_format((float)$total, 2) ?></b></div>
   <?php if (App\Auth::is('admin','editor')): ?>
     <a class="btn list-new" href="/transfers/new">+ New transfer</a>
   <?php endif; ?>

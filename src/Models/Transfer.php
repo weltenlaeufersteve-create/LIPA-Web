@@ -56,6 +56,35 @@ final class Transfer
         return $stmt->fetchAll();
     }
 
+    /** @return array{0:string,1:array} date-range WHERE clause for the transfers table. */
+    private static function dateWhere(array $filters): array
+    {
+        $cond = []; $params = [];
+        if (!empty($filters['date_from'])) { $cond[] = 'date >= :date_from'; $params[':date_from'] = $filters['date_from']; }
+        if (!empty($filters['date_to']))   { $cond[] = 'date <= :date_to';   $params[':date_to']   = $filters['date_to']; }
+        return [$cond ? 'WHERE ' . implode(' AND ', $cond) : '', $params];
+    }
+
+    public static function totalTzs(array $filters = []): float
+    {
+        [$where, $params] = self::dateWhere($filters);
+        $stmt = Database::pdo()->prepare("SELECT COALESCE(SUM(amount_tzs),0) FROM transfers {$where}");
+        $stmt->execute($params);
+        return (float)$stmt->fetchColumn();
+    }
+
+    /** Transfers received (money moved in) per destination account. @return array<int,float> id => total */
+    public static function receivedByAccount(array $filters = []): array
+    {
+        [$where, $params] = self::dateWhere($filters);
+        $stmt = Database::pdo()->prepare("SELECT to_account_id AS id, COALESCE(SUM(amount_tzs),0) AS total
+                                          FROM transfers {$where} GROUP BY to_account_id");
+        $stmt->execute($params);
+        $out = [];
+        foreach ($stmt->fetchAll() as $r) { if ($r['id'] !== null) { $out[(int)$r['id']] = (float)$r['total']; } }
+        return $out;
+    }
+
     public static function delete(int $id): void
     {
         $stmt = Database::pdo()->prepare('DELETE FROM transfers WHERE id = :id');

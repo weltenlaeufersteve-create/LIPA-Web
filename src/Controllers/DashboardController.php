@@ -27,6 +27,7 @@ final class DashboardController
             'projects'=>$proj,
             'incomeByDonor'=>Income::byDonor($f),
             'balances'=>\App\Models\Account::balancesAll(),
+            'transfersIn'=>\App\Models\Transfer::receivedByAccount($f),
             'expenseByCategory'=>Expense::byCategory($f),
         ], 'Dashboard');
     }
