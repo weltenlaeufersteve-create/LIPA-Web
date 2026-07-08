@@ -42,9 +42,21 @@
   var laneOrder = downUsed ? ["income", "acc", "down", "expense"] : ["income", "acc", "expense"];
   host.setAttribute("viewBox", "0 0 " + W + " 600");
 
+  // Group expense categories by their dominant source account (main vs transfer-fed),
+  // so Bank's expenses cluster at the top and Cash's at the bottom instead of interleaving.
+  nodes.forEach(function (n) { if (n.col === 2) { n._acc = 0; n._down = 0; } });
+  links.forEach(function (l) {
+    var t = N[l.t];
+    if (t.col === 2) { if (N[l.s].lane === "down") t._down += l.v; else t._acc += l.v; }
+  });
+  nodes.forEach(function (n) { if (n.col === 2) n._grp = n._down > n._acc ? 1 : 0; });
+
   var lanes = {}; laneOrder.forEach(function (k) { lanes[k] = []; });
   nodes.forEach(function (n) { lanes[n.lane].push(n); });
-  laneOrder.forEach(function (k) { lanes[k].sort(function (a, b) { return b.value - a.value; }); });
+  laneOrder.forEach(function (k) {
+    if (k === "expense") lanes[k].sort(function (a, b) { return (a._grp - b._grp) || (b.value - a.value); });
+    else lanes[k].sort(function (a, b) { return b.value - a.value; });
+  });
 
   var scale = Infinity;
   laneOrder.forEach(function (k) {
@@ -57,7 +69,9 @@
   laneOrder.forEach(function (k) {
     var list = lanes[k];
     var h = list.reduce(function (a, n) { return a + n.value * scale; }, 0) + Math.max(list.length - 1, 0) * PAD;
-    var y = TOP + (HAV - h) / 2;
+    // Transfer-fed accounts (Cash) sit at the bottom so the transfer bends downward,
+    // clear of the main account's expenses.
+    var y = k === "down" ? (TOP + HAV - h) : TOP + (HAV - h) / 2;
     list.forEach(function (n) {
       n.h = n.value * scale; n.y0 = y; n.y1 = y + n.h; y = n.y1 + PAD;
       n.x1 = laneX[k]; n.x2 = laneX[k] + NW; n.yc = (n.y0 + n.y1) / 2;
